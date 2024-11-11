@@ -34,7 +34,7 @@ exports.getAll = (req, res) => {
   Model.getAll(keyword, flag, (err, data) => {
     if (err) return response(res, {}, {}, 500, "Something went wrong.");
     else {
-      res.send({ success: true, data: data });
+      return response(res, { data: data });
     }
   });
 };
@@ -70,7 +70,7 @@ exports.update = (req, res) => {
 
   const model = new Model({
     title: req.body.title,
-    target: req.body.target_ip,
+    target: req.body.target,
     listen_port: req.body.listen_port,
     target_port: req.body.target_port,
     is_https: req.body.is_https,

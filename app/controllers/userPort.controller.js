@@ -104,6 +104,31 @@ exports.getHttpsRules = (req, res) => {
   }
 };
 
+exports.batchUpdate = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  const id = req.body.id;
+  const modelData = req.body.data;
+
+  Model.batchUpdate(id, modelData, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving user.",
+      });
+    } else {
+      if (data) {
+        res.send({ success: true, users: data });
+      } else {
+        res.send({ success: false });
+      }
+    }
+  });
+};
+
 exports.update = (req, res) => {
   if (!req.body) {
     res.status(400).send({

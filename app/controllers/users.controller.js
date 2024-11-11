@@ -11,9 +11,9 @@ exports.create = (req, res) => {
   }
   const user = new User({
     email: req.body.email,
-    password: hashPassword('12345'),
+    password: hashPassword("123456"),
     is_valid: req.body.is_valid,
-    otp_secret: '123456',
+    otp_secret: "123456",
     login_count: 0,
     created_at: new Date(),
   });
@@ -86,7 +86,6 @@ exports.update = (req, res) => {
   const id = req.body.id;
 
   const user = new User({
-    name: req.body.name,
     email: req.body.email,
     is_valid: req.body.is_valid,
   });

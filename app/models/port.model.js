@@ -27,13 +27,8 @@ PortModel.findById = (id, result) => {
       return;
     }
 
-    if (res.length) {
-      result(null, res[0]);
-      return;
-    }
-
-    // not found Tutorial with the id
-    result({ kind: "not_found" }, null);
+    result(null, res);
+    return;
   });
 };
 

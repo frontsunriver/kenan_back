@@ -63,8 +63,19 @@ module.exports = (app) => {
   router.post("/userPort/create", userPort.create);
   router.post("/userPort/getAll", userPort.getAll);
   router.post("/userPort/findById", userPort.findById);
+  router.post("/userPort/findByUserId", userPort.findByUserId);
+  router.post("/userPort/batchUpdate", userPort.batchUpdate);
   router.post("/userPort/update", userPort.update);
   router.post("/userPort/remove", userPort.remove);
+
+  // User VM API
+  router.post("/uservm/create", userVMImage.create);
+  router.post("/uservm/getAll", userVMImage.getAll);
+  router.post("/uservm/findById", userVMImage.findById);
+  router.post("/uservm/findByUserId", userVMImage.findByUserId);
+  router.post("/uservm/update", userVMImage.update);
+  router.post("/uservm/batchUpdate", userVMImage.batchUpdate);
+  router.post("/uservm/remove", userVMImage.remove);
 
   // Admin API
   router.post("/admin/signin", admin.signin);

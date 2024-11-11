@@ -9,8 +9,8 @@ exports.create = (req, res) => {
     });
   }
   const model = new Model({
-    title: req.body.title,
-    description: req.body.description,
+    user_id: req.body.user_id,
+    vm_image_id: req.body.vm_image_id,
     is_valid: req.body.is_valid,
     created_at: new Date(),
   });
@@ -78,9 +78,7 @@ exports.findByUserId = (req, res) => {
     Model.findByUserId(user_id, (err, data) => {
       if (err) return response(res, {}, {}, 500, "Something went wrong.");
       else {
-        return response(res, {
-          data: data,
-        });
+        response(res, { data: data });
       }
     });
   } catch (err) {
@@ -129,9 +127,11 @@ exports.update = (req, res) => {
 
   const id = req.body.id;
 
+  console.log(req.body.is_valid);
+
   const model = new Model({
-    title: req.body.title,
-    description: req.body.description,
+    user_id: req.body.user_id,
+    vm_image_id: req.body.vm_image_id,
     is_valid: req.body.is_valid,
   });
 
@@ -141,6 +141,31 @@ exports.update = (req, res) => {
         message: err.message || "Some error occurred while retrieving user.",
       });
     else {
+      if (data) {
+        res.send({ success: true, users: data });
+      } else {
+        res.send({ success: false });
+      }
+    }
+  });
+};
+
+exports.batchUpdate = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  const id = req.body.id;
+  const modelData = req.body.data;
+
+  Model.batchUpdate(id, modelData, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving user.",
+      });
+    } else {
       if (data) {
         res.send({ success: true, users: data });
       } else {
