@@ -106,6 +106,22 @@ exports.update = (req, res) => {
   });
 };
 
+exports.updatePassword = (req, res) => {
+  const id = req.body.id;
+  const password = md5(req.body.password);
+
+  Model.updatePassword(id, password, (err, data) => {
+    if (err)
+      res.send({
+        success: false,
+        message: err.message || "Something went wrong",
+      });
+    else {
+      res.send({ success: true, data: data });
+    }
+  });
+};
+
 exports.remove = (req, res) => {
   const id = req.body.id;
 

@@ -29,13 +29,8 @@ User.findById = (id, result) => {
       return;
     }
 
-    if (res.length) {
-      result(null, res[0]);
-      return;
-    }
-
-    // not found Tutorial with the id
-    result({ kind: "not_found" }, null);
+    result(null, res);
+    return;
   });
 };
 
@@ -116,6 +111,26 @@ User.updatePassword = (id, user, result) => {
           result({ kind: "not_found" }, null);
         }
       });
+    }
+  );
+};
+
+User.updateLoginCount = (id, result) => {
+  sql.query(
+    `update users set login_count = (select login_count from users where id = ${id}) + 1, last_login_at = ? where id = ${id}`,
+    [new Date()],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      result(null, { id: id });
     }
   );
 };

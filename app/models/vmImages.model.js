@@ -6,6 +6,7 @@ const VMImage = function (model) {
   this.description = model.description;
   this.is_valid = model.is_valid;
   this.created_at = model.created_at;
+  this.size = model.size;
   this.download_url = model.download_url;
 };
 
@@ -77,8 +78,16 @@ VMImage.getAll = (keyword, flag, result) => {
 
 VMImage.update = (id, model, result) => {
   sql.query(
-    "UPDATE vm_images SET title = ?, password = ?, description = ?, download_url = ?, is_valid = ? WHERE id = ?",
-    [model.title, model.password, model.description, model.download_url, model.is_valid, id],
+    "UPDATE vm_images SET title = ?, password = ?, description = ?, download_url = ?, size=?, is_valid = ? WHERE id = ?",
+    [
+      model.title,
+      model.password,
+      model.description,
+      model.download_url,
+      model.size,
+      model.is_valid,
+      id,
+    ],
     (err, res) => {
       if (err) {
         result(null, err);

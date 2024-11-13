@@ -219,8 +219,9 @@ exports.checkOTP = (req, res) => {
   const password = req.body.password;
   const otp = req.body.otp;
   const machine_id = req.body.machine_id;
+  const os = req.body.os;
 
-  if (!otp || !email || !password || !machine_id)
+  if (!otp || !email || !password || !machine_id || !os)
     return response(res, {}, {}, 400, "Please fill all the required fields.");
 
   User.checkOTP(email, password, otp, (err, data) => {
@@ -236,6 +237,8 @@ exports.checkOTP = (req, res) => {
             const token = jwt.sign({ id: user_id }, JWT_SECRET, {
               expiresIn: JWT_EXPIRES_TIME,
             });
+            UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
+            User.updateLoginCount(user_id, (err3, data3) => {});
             return response(res, {
               token: token,
               user: data[0],

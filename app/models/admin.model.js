@@ -29,13 +29,8 @@ Admin.findById = (id, result) => {
       return;
     }
 
-    if (res.length) {
-      result(null, res[0]);
-      return;
-    }
-
-    // not found Tutorial with the id
-    result({ kind: "not_found" }, null);
+    result(null, res);
+    return;
   });
 };
 
@@ -83,7 +78,22 @@ Admin.update = (id, name, email, role, result) => {
         return;
       }
 
-      result(null, userRes[0]);
+      result(null, res);
+    }
+  );
+};
+
+Admin.updatePassword = (id, password, result) => {
+  sql.query(
+    "UPDATE admins SET password = ? WHERE id = ?",
+    [password, id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+
+      result(null, res);
     }
   );
 };

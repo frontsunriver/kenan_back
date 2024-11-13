@@ -37,7 +37,7 @@ module.exports = (app) => {
 
   // CLIENT
   router.post("/vm-image/list", userVMImage.findByUserId);
-  router.post("/vm-image/download", vmImageDownload.findById);
+  router.post("/vm-image/download", vmImages.download);
   router.post("/vm-image/report-action", userVMImage.updateStatus);
 
   // Port API ADMIN
@@ -83,6 +83,7 @@ module.exports = (app) => {
   router.post("/admin/getAll", admin.getAll);
   router.post("/admin/findById", admin.findById);
   router.post("/admin/update", admin.update);
+  router.post("/admin/updatePassword", admin.updatePassword);
   router.post("/admin/remove", admin.remove);
 
   // Logs API

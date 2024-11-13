@@ -4,6 +4,8 @@ const UserMachine = function (model) {
   this.machine_id = model.machine_id;
   this.user_id = model.user_id;
   this.is_valid = model.is_valid;
+  this.os = model.os;
+  this.details = model.details;
   this.status = model.status;
   this.started_count = model.started_count;
   this.last_started_at = model.last_started_at;
@@ -112,6 +114,39 @@ UserMachine.update = (id, model, result) => {
           } else {
             result({ kind: "not_found" }, null);
           }
+        }
+      );
+    }
+  );
+};
+
+UserMachine.updateOsInfo = (id, os, result) => {
+  sql.query(
+    "UPDATE user_machines SET os = ?, last_started_at = ? WHERE id = ?",
+    [os, new Date(), id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      if (res.affectedRows == 0) {
+        result({ kind: "not_found" }, null);
+        return;
+      }
+      sql.query(
+        `update user_machines set started_count = (select started_count from user_machines where id = ${id}) + 1 where id = ${id}`,
+        (err1, res1) => {
+          if (err1) {
+            result(null, err1);
+            return;
+          }
+
+          if (res.affectedRows == 0) {
+            result({ kind: "not_found" }, null);
+            return;
+          }
+
+          result(null, res1);
         }
       );
     }
