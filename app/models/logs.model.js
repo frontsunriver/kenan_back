@@ -48,6 +48,8 @@ LogsModel.getAll = (keyword, flag, result) => {
     // query += ` and ports.is_active = ${flag}`;
   }
 
+  query += " order by time desc";
+
   sql.query(query, (err, res) => {
     if (err) {
       result(null, err);

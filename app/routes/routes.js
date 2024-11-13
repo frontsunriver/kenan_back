@@ -10,11 +10,13 @@ module.exports = (app) => {
   const userConfig = require("../controllers/userConfig.controller.js");
   const userVMImage = require("../controllers/userVmImageController.js");
   const logs = require("../controllers/log.controller.js");
+  const session = require("../controllers/session.controller.js");
+  const { authenticateToken } = require("../utils/utils.js");
   var router = require("express").Router();
 
   router.post("/auth/login", authentication.login);
-  router.post("/auth/logout", authentication.logout);
-  router.post("/auth/validate", authentication.validate);
+  router.post("/auth/logout", authenticateToken, authentication.logout);
+  router.post("/auth/validate", authenticateToken, authentication.validate);
   router.post("/auth/checkOTP", authentication.checkOTP);
 
   // User API ADMIN
@@ -26,7 +28,7 @@ module.exports = (app) => {
   router.post("/user/remove", user.remove);
 
   // CLIENT
-  router.post("/user/config", userConfig.findByUserId);
+  router.post("/user/config", authenticateToken, userConfig.findByUserId);
 
   // VM Images API ADMIN
   router.post("/vmimage/create", vmImages.create);
@@ -36,8 +38,8 @@ module.exports = (app) => {
   router.post("/vmimage/remove", vmImages.remove);
 
   // CLIENT
-  router.post("/vm-image/list", userVMImage.findByUserId);
-  router.post("/vm-image/download", vmImages.download);
+  router.post("/vm-image/list", authenticateToken, userVMImage.findByUserId);
+  router.post("/vm-image/download", authenticateToken, vmImages.download);
   router.post("/vm-image/report-action", userVMImage.updateStatus);
 
   // Port API ADMIN
@@ -48,8 +50,12 @@ module.exports = (app) => {
   router.post("/port/remove", port.remove);
 
   // CLIENT
-  router.post("/network/user-rules", userPort.findByUserId);
-  router.post("/network/https-rules", userPort.getHttpsRules);
+  router.post("/network/user-rules", authenticateToken, userPort.findByUserId);
+  router.post(
+    "/network/https-rules",
+    authenticateToken,
+    userPort.getHttpsRules
+  );
   router.post("/network/routing-rules", port.getAll);
 
   // User Machine API
@@ -77,6 +83,14 @@ module.exports = (app) => {
   router.post("/uservm/batchUpdate", userVMImage.batchUpdate);
   router.post("/uservm/remove", userVMImage.remove);
 
+  // User Config API
+  router.post("/userconfig/create", userConfig.create);
+  router.post("/userconfig/getAll", userConfig.getAll);
+  router.post("/userconfig/findById", userConfig.findById);
+  router.post("/userconfig/findByUserId", userConfig.findByUserId1);
+  router.post("/userconfig/update", userConfig.update);
+  router.post("/userconfig/remove", userConfig.remove);
+
   // Admin API
   router.post("/admin/signin", admin.signin);
   router.post("/admin/signup", admin.signup);
@@ -92,6 +106,10 @@ module.exports = (app) => {
   router.post("/logs/findById", logs.findById);
   router.post("/logs/update", logs.update);
   router.post("/logs/remove", logs.remove);
+
+  // Session API
+  router.post("/session/get", session.getAll);
+  router.post("/session/update", session.update);
 
   app.use("/api/", router);
 };

@@ -9,10 +9,10 @@ exports.create = (req, res) => {
     });
   }
   const model = new Model({
-    title: req.body.title,
-    description: req.body.description,
+    user_id: req.body.user_id,
+    copy_to_vm: req.body.copy_to_vm,
+    enable_outbound: req.body.enable_outbound,
     is_valid: req.body.is_valid,
-    created_at: new Date(),
   });
 
   Model.create(model, (err, data) => {
@@ -73,6 +73,33 @@ exports.findById = (req, res) => {
   }
 };
 
+exports.findByUserId1 = (req, res) => {
+  if (!req.body) {
+    res.send({
+      success: false,
+      message: "Content can not be empty!",
+    });
+  }
+  const user_id = req.body.user_id;
+  try {
+    Model.findByUserId(user_id, (err, data) => {
+      if (err)
+        res.send({
+          success: false,
+          message: "Something went wrong!",
+        });
+      else {
+        return res.send({ success: true, data: data });
+      }
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 exports.findByUserId = (req, res) => {
   if (!req.body) {
     return response(res, {}, {}, 400, "Bad Request.");
@@ -101,22 +128,52 @@ exports.update = (req, res) => {
 
   const id = req.body.id;
 
-  const model = new Model({
-    title: req.body.title,
-    description: req.body.description,
-    is_valid: req.body.is_valid,
-  });
-
-  Model.update(id, model, (err, data) => {
-    if (err)
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving user.",
-      });
+  Model.findByUserId(id, (err, data) => {
+    if (err) return response(res, {}, {}, 500, "Something went wrong.");
     else {
-      if (data) {
-        res.send({ success: true, users: data });
+      if (data.length > 0) {
+        const model = new Model({
+          user_id: id,
+          copy_to_vm: req.body.copy_to_vm,
+          enable_outbound: req.body.enable_outbound,
+        });
+
+        Model.updateByUserId(id, model, (err1, data1) => {
+          if (err1) {
+            console.log(err1);
+            res.status(500).send({
+              message:
+                err1.message || "Some error occurred while retrieving user.",
+            });
+          } else {
+            if (data1) {
+              res.send({ success: true, data: data1 });
+            } else {
+              res.send({ success: false });
+            }
+          }
+        });
       } else {
-        res.send({ success: false });
+        const model = new Model({
+          user_id: id,
+          copy_to_vm: req.body.copy_to_vm,
+          enable_outbound: req.body.enable_outbound,
+          is_valid: 1,
+        });
+        Model.create(model, (err1, data1) => {
+          if (err1)
+            res.status(500).send({
+              message:
+                err1.message || "Some error occurred while retrieving user.",
+            });
+          else {
+            if (data1) {
+              res.send({ success: true, data: data1 });
+            } else {
+              res.send({ success: false });
+            }
+          }
+        });
       }
     }
   });

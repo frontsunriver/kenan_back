@@ -21,9 +21,10 @@ UserVMImage.create = (model, result) => {
 
 UserVMImage.findById = (id, result) => {
   sql.query(
-    `SELECT user_vm_images.*, vm_image.title, vm_image.description, vm_image.download_url, users.email, users.login_count FROM user_vm_images left join users on users.id = user_vm_images.user_id left join vm_images on vm_images.id = user_vm_images.vm_image_id WHERE user_vm_images.id = ${id}`,
+    `SELECT user_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, users.email, users.login_count, users.email FROM user_vm_images left join users on users.id = user_vm_images.user_id left join vm_images on vm_images.id = user_vm_images.vm_image_id WHERE user_vm_images.id = ${id}`,
     (err, res) => {
       if (err) {
+        console.log(err);
         result(err, null);
         return;
       }
@@ -36,7 +37,7 @@ UserVMImage.findById = (id, result) => {
 
 UserVMImage.findByUserId = (id, result) => {
   sql.query(
-    `SELECT user_vm_images.*, vm_images.title, vm_images.description, vm_images.download_url, users.email, users.login_count FROM user_vm_images left join users on users.id = user_vm_images.user_id left join vm_images on vm_images.id = user_vm_images.vm_image_id WHERE user_vm_images.user_id = ${id}`,
+    `SELECT user_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, users.email, users.login_count FROM user_vm_images left join users on users.id = user_vm_images.user_id left join vm_images on vm_images.id = user_vm_images.vm_image_id WHERE user_vm_images.user_id = ${id}`,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -50,10 +51,10 @@ UserVMImage.findByUserId = (id, result) => {
 
 UserVMImage.getAll = (keyword, flag, result) => {
   let query =
-    "SELECT user_vm_images.*, vm_images.title, vm_images.description, vm_images.download_url, users.email, users.login_count FROM user_vm_images left join users on users.id = user_vm_images.user_id left join vm_images on vm_images.id = user_vm_images.vm_image_id where 1=1 ";
+    "SELECT user_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, users.email, users.login_count FROM user_vm_images left join users on users.id = user_vm_images.user_id left join vm_images on vm_images.id = user_vm_images.vm_image_id where 1=1 ";
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and (users.email LIKE '%${keyword}%' or vm_images.title LIKE '%${keyword}%' or vm_images.description LIKE '%${keyword}%' or vm_images.download_url LIKE '%${keyword}%')`;
   }
 
   if (flag) {

@@ -52,6 +52,7 @@ exports.findById = (req, res) => {
   const id = req.body.id;
   try {
     Model.findById(id, (err, data) => {
+      console.log(err);
       if (err) return response(res, {}, {}, 500, "Something went wrong.");
       else {
         return response(res, {
@@ -121,7 +122,7 @@ exports.batchUpdate = (req, res) => {
       });
     } else {
       if (data) {
-        res.send({ success: true, users: data });
+        res.send({ success: true, data: data });
       } else {
         res.send({ success: false });
       }

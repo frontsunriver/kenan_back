@@ -167,7 +167,7 @@ exports.batchUpdate = (req, res) => {
       });
     } else {
       if (data) {
-        res.send({ success: true, users: data });
+        res.send({ success: true, data: data });
       } else {
         res.send({ success: false });
       }

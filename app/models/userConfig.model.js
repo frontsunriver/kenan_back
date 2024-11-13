@@ -3,6 +3,7 @@ const sql = require("./db.js");
 const UserConfig = function (model) {
   this.user_id = model.user_id;
   this.copy_to_vm = model.copy_to_vm;
+  this.enable_outbound = model.enable_outbound;
   this.is_valid = model.is_valid;
 };
 
@@ -25,8 +26,6 @@ UserConfig.findById = (id, result) => {
     }
 
     return result(null, res);
-
-    // not found Tutorial with the id
   });
 };
 
@@ -62,10 +61,10 @@ UserConfig.getAll = (keyword, flag, result) => {
   });
 };
 
-UserConfig.update = (id, user, result) => {
+UserConfig.update = (id, model, result) => {
   sql.query(
-    "UPDATE user_configs SET user_id = ?, copy_to_vm = ?, is_valid = ? WHERE id = ?",
-    [user.user_id, user.copy_to_vm, user.is_valid, id],
+    "UPDATE user_configs SET user_id = ?, copy_to_vm = ?, enable_outbound = ? WHERE id = ?",
+    [model.user_id, model.copy_to_vm, model.enable_outbound, id],
     (err, res) => {
       if (err) {
         result(null, err);
@@ -92,6 +91,22 @@ UserConfig.update = (id, user, result) => {
           }
         }
       );
+    }
+  );
+};
+
+UserConfig.updateByUserId = (id, model, result) => {
+  sql.query(
+    "UPDATE user_configs SET user_id = ?, copy_to_vm = ?, enable_outbound = ? WHERE user_id = ?",
+    [model.user_id, model.copy_to_vm, model.enable_outbound, id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+
+      result(null, res);
+      return;
     }
   );
 };

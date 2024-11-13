@@ -51,11 +51,15 @@ Admin.signin = (email, password, result) => {
   });
 };
 
-Admin.getAll = (keyword, result) => {
+Admin.getAll = (keyword, flag, result) => {
   let query = "SELECT * from admins where 1=1 ";
 
   if (keyword) {
-    query += ` where name LIKE '%${keyword}%'`;
+    query += ` and email LIKE '%${keyword}%'`;
+  }
+
+  if (flag) {
+    query += ` and admins.is_valid = ${flag}`;
   }
 
   sql.query(query, (err, res) => {
@@ -64,7 +68,7 @@ Admin.getAll = (keyword, result) => {
       return;
     }
 
-    result(null, res);
+    return result(null, res);
   });
 };
 

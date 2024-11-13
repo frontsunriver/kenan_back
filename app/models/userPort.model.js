@@ -19,7 +19,7 @@ UserPortModel.create = (model, result) => {
 
 UserPortModel.findById = (id, result) => {
   sql.query(
-    `SELECT user_ports.*, user.email, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target FROM user_ports left join users on users.id = user_ports.user_id left join port_map.id = user_ports.port_map_id WHERE user_ports.id = ${id}`,
+    `SELECT user_ports.*, users.email, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target FROM user_ports left join users on users.id = user_ports.user_id left join port_map on port_map.id = user_ports.port_map_id WHERE user_ports.id = ${id}`,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -68,7 +68,7 @@ UserPortModel.getAll = (keyword, flag, result) => {
     "SELECT user_ports.*, users.email, port_map.title, port_map.listen_port, port_map.target_port, port_map.is_https, port_map.target from user_ports left join users on user_ports.user_id = users.id left join port_map on port_map.id = user_ports.port_map_id where 1=1 ";
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and (users.email LIKE '%${keyword}%' or port_map.title LIKE '%${keyword}%' or port_map.target_port LIKE '%${keyword}%' or port_map.target LIKE '%${keyword}%' or port_map.listen_port LIKE '%${keyword}%')`;
   }
 
   if (flag) {

@@ -36,11 +36,11 @@ PortModel.getAll = (keyword, flag, result) => {
   let query = "SELECT * from port_map where 1=1 ";
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and (title like '%${keyword}%' or target like '%${keyword}%' or listen_port like '%${keyword}%')`;
   }
 
   if (flag) {
-    query += ` and ports.is_active = ${flag}`;
+    query += ` and port_map.is_active = ${flag}`;
   }
 
   sql.query(query, (err, res) => {

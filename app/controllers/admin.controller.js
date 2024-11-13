@@ -17,7 +17,8 @@ exports.signin = (req, res) => {
           object_id: data.id,
           object_title: "Admin Login",
           action: "Login",
-          details: req.headers['x-forwarded-for'] || req.ip,
+          time: new Date(),
+          details: req.headers["x-forwarded-for"] || req.ip,
         };
         LogsModel.create(logData, (err1, data1) => {});
         res.send({ success: true, users: data });
@@ -56,8 +57,8 @@ exports.signup = (req, res) => {
 
 exports.getAll = (req, res) => {
   const keyword = req.body.keyword;
-
-  Model.getAll(keyword, (err, data) => {
+  const flag = req.body.flag;
+  Model.getAll(keyword, flag, (err, data) => {
     if (err)
       res.send({
         success: false,

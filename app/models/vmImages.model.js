@@ -28,13 +28,8 @@ VMImage.findById = (id, result) => {
       return;
     }
 
-    if (res.length) {
-      result(null, res[0]);
-      return;
-    }
-
-    // not found Tutorial with the id
-    result({ kind: "not_found" }, null);
+    result(null, res);
+    return;
   });
 };
 
@@ -59,7 +54,7 @@ VMImage.getAll = (keyword, flag, result) => {
   let query = "SELECT * from vm_images where 1=1 ";
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and (vm_images.title LIKE '%${keyword}%' or vm_images.description LIKE '%${keyword}%' or vm_images.download_url LIKE '%${keyword}%')`;
   }
 
   if (flag) {

@@ -38,7 +38,7 @@ User.getAll = (keyword, flag, result) => {
   let query = "SELECT * from users where 1=1 ";
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and email like '%${keyword}%'`;
   }
 
   if (flag) {
@@ -57,8 +57,8 @@ User.getAll = (keyword, flag, result) => {
 
 User.update = (id, user, result) => {
   sql.query(
-    "UPDATE users SET name = ?, email = ?, is_valid = ? WHERE id = ?",
-    [user.name, user.email, user.is_valid, id],
+    "UPDATE users SET email = ?, is_valid = ? WHERE id = ?",
+    [user.email, user.is_valid, id],
     (err, res) => {
       if (err) {
         result(null, err);

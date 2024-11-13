@@ -18,7 +18,11 @@ exports.create = async (req, res) => {
       console.log(err);
       fileSize = 0;
     }
-    fileSize = stats.size;
+    try {
+      fileSize = stats.size;
+    } catch (exp) {
+      fileSize = 0;
+    }
     const model = new Model({
       title: req.body.title,
       password: req.body.password,
@@ -122,7 +126,11 @@ exports.update = async (req, res) => {
     if (err) {
       fileSize = 0;
     }
-    fileSize = stats.size;
+    try {
+      fileSize = stats.size;
+    } catch (exp) {
+      fileSize = 0;
+    }
     const model = new Model({
       title: req.body.title,
       password: req.body.password,
@@ -167,32 +175,43 @@ exports.download = (req, res) => {
   if (!req.body) {
     return response(res, {}, {}, 400, "Something went wrong.");
   }
+
   const id = req.body.id;
-  const user_id = req.body.id;
-  try {
-    Model.findById(id, (err, data) => {
-      if (err) return response(res, {}, {}, 400, "Something went wrong.");
-      else {
-        res.download(data[0].download_url, (err) => {
-          if (err) {
-            console.error("Error downloading file:", err);
-            return response(res, {}, {}, 400, "Something went wrong.");
-          } else {
-            const model = new DownloadModel({
-              user_id: user_id,
-              vm_image_id: id,
-              downloaded_at: new Date(),
-            });
-            DownloadModel.create(model, (err1, data1) => {});
-            return response(res, { message: "Download successfully" });
+  const user_id = req.body.user_id;
+
+  Model.findById(id, (err, data) => {
+    if (err || !data || data.length === 0) {
+      return response(res, {}, {}, 400, "Something went wrong.");
+    }
+
+    const downloadUrl = data[0].download_url;
+
+    res.download(downloadUrl, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        // Ensure that you don't send multiple responses
+        if (!res.headersSent) {
+          return response(res, {}, {}, 400, "Something went wrong.");
+        }
+      } else {
+        const model = new DownloadModel({
+          user_id: user_id,
+          vm_image_id: id,
+          downloaded_at: new Date(),
+        });
+
+        DownloadModel.create(model, (err1) => {
+          if (err1) {
+            console.error("Error saving download record:", err1);
+            // Handle the error but do not send another response
           }
         });
+
+        // Send success response only if the download was successful
+        if (!res.headersSent) {
+          return response(res, { message: "Download successfully" });
+        }
       }
     });
-  } catch (err) {
-    res.send({
-      success: false,
-      message: "Wrong Parameter!",
-    });
-  }
+  });
 };

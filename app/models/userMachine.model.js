@@ -69,7 +69,7 @@ UserMachine.getAll = (keyword, flag, result) => {
     "SELECT user_machines.*, users.email from user_machines left join users on users.id = user_machines.user_id where 1=1 ";
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and (users.email LIKE '%${keyword}%' or user_machines.machine_id LIKE '%${keyword}%')`;
   }
 
   if (flag) {
@@ -95,25 +95,16 @@ UserMachine.update = (id, model, result) => {
         result(null, err);
         return;
       }
-      if (res.affectedRows == 0) {
-        result({ kind: "not_found" }, null);
-        return;
-      }
-
       sql.query(
         "SELECT * FROM user_machines WHERE id = ?",
         [id],
-        (err, userRes) => {
-          if (err) {
+        (err1, userRes) => {
+          if (err1) {
             result(null, err);
             return;
           }
 
-          if (userRes.length) {
-            result(null, userRes[0]);
-          } else {
-            result({ kind: "not_found" }, null);
-          }
+          result(null, userRes);
         }
       );
     }
