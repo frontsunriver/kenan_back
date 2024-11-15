@@ -24,6 +24,7 @@ module.exports = (app) => {
   router.post("/user/getAll", user.getAll);
   router.post("/user/findById", user.findById);
   router.post("/user/update", user.update);
+  router.post("/user/resetPassword", user.resetPassword);
   router.post("/user/updateUserInfo", user.updateUserInfo);
   router.post("/user/remove", user.remove);
 

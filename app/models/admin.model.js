@@ -51,6 +51,20 @@ Admin.signin = (email, password, result) => {
   });
 };
 
+Admin.addLoginCount = (id, result) => {
+  sql.query(
+    `update admins set login_count = (select login_count from admins where id = ${id}) + 1, last_login_at = ? where id = ${id}`, [new Date()],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      result(null, { id: id });
+      return;
+    }
+  );
+};
+
 Admin.getAll = (keyword, flag, result) => {
   let query = "SELECT * from admins where 1=1 ";
 

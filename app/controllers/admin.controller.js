@@ -12,9 +12,11 @@ exports.signin = (req, res) => {
       });
     else {
       if (data.length > 0) {
+        Model.addLoginCount(data[0].id, (error, loginData) => {
+        });
         const logData = {
           object_type: 1,
-          object_id: data.id,
+          object_id: data[0].id,
           object_title: "Admin Login",
           action: "Login",
           time: new Date(),

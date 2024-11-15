@@ -105,6 +105,34 @@ exports.update = (req, res) => {
   });
 };
 
+exports.resetPassword = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+
+  const id = req.body.id;
+
+  const user = new User({
+    password: hashPassword('123456')
+  });
+
+  User.updatePassword(id, user, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving user.",
+      });
+    else {
+      if (data) {
+        res.send({ success: true, data: data });
+      } else {
+        res.send({ success: false });
+      }
+    }
+  });
+};
+
 exports.updateUserInfo = (req, res) => {
   if (!req.body) {
     res.status(400).send({
