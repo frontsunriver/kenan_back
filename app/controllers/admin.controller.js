@@ -20,7 +20,7 @@ exports.signin = (req, res) => {
           time: new Date(),
           details: req.headers["x-forwarded-for"] || req.ip,
         };
-        LogsModel.create(logData, (err1, data1) => {});
+        LogsModel.create(logData, (err1, data1) => { });
         res.send({ success: true, users: data });
       } else {
         res.send({ success: false });

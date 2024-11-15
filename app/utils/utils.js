@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { JWT_SECRET } = require("../config/constant");
+const jwt = require("jsonwebtoken");
 
 exports.hashPassword = (password) => {
   return crypto.createHash("sha256").update(password).digest("hex");
