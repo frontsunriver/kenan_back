@@ -16,13 +16,21 @@ exports.create = (req, res) => {
   });
 
   Model.create(model, (err, data) => {
-    if (err)
-      res.send({
-        success: false,
-        message:
-          err.message || "Some error occurred while creating the Tutorial.",
-      });
-    else res.send({ success: true, data: data });
+    console.log(err);
+    if (err) {
+      if (err.errno == 1062) {
+        res.send({
+          success: false,
+          message: "User can't have same vm image",
+        });
+      } else {
+        res.send({
+          success: false,
+          message:
+            err.message || "Some error occurred while creating the Tutorial.",
+        });
+      }
+    } else res.send({ success: true, data: data });
   });
 };
 

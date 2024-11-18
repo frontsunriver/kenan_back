@@ -14,12 +14,22 @@ exports.create = (req, res) => {
   });
 
   Model.create(model, (err, data) => {
-    if (err)
-      res.send({
-        success: false,
-        message:
-          err.message || "Some error occurred while creating the Tutorial.",
-      });
+    if (err) {
+      if (err.errno == 1062) {
+        res.send({
+          success: false,
+          message:
+            "User can't have same port",
+        });
+      } else {
+        res.send({
+          success: false,
+          message:
+            err.message || "Some error occurred while creating the Tutorial.",
+        });
+      }
+
+    }
     else res.send({ success: true, data: data });
   });
 };

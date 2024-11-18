@@ -190,11 +190,11 @@ const imageUpload = multer({ storage: storage });
 
 route(app);
 
-app.use("/", (req, res, next) =>
-  // in deployment we send index.html for all additional paths not defined by our express routes
-  // react router pushes different paths to window url
-  res.sendFile(path.join(__dirname, "public", "index.html"))
-);
+// app.use("/", (req, res, next) =>
+//   // in deployment we send index.html for all additional paths not defined by our express routes
+//   // react router pushes different paths to window url
+//   res.sendFile(path.join(__dirname, "public", "index.html"))
+// );
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8000;
