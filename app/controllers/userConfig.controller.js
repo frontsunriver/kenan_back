@@ -129,13 +129,19 @@ exports.update = (req, res) => {
   const id = req.body.id;
 
   Model.findByUserId(id, (err, data) => {
-    if (err) return response(res, {}, {}, 500, "Something went wrong.");
+    if (err)
+      return res.send({ success: false, message: "Something went wrong" });
     else {
       if (data.length > 0) {
         const model = new Model({
           user_id: id,
-          copy_to_vm: req.body.copy_to_vm,
+          copy_text_to_vm: req.body.copy_text_to_vm,
+          copy_text_from_vm: req.body.copy_text_from_vm,
+          copy_file_to_vm: req.body.copy_file_to_vm,
+          copy_file_from_vm: req.body.copy_file_from_vm,
+          allow_screenshot: req.body.allow_screenshot,
           enable_outbound: req.body.enable_outbound,
+          is_valid: 1,
         });
 
         Model.updateByUserId(id, model, (err1, data1) => {
@@ -156,7 +162,11 @@ exports.update = (req, res) => {
       } else {
         const model = new Model({
           user_id: id,
-          copy_to_vm: req.body.copy_to_vm,
+          copy_text_to_vm: req.body.copy_text_to_vm,
+          copy_text_from_vm: req.body.copy_text_from_vm,
+          copy_file_to_vm: req.body.copy_file_to_vm,
+          copy_file_from_vm: req.body.copy_file_from_vm,
+          allow_screenshot: req.body.allow_screenshot,
           enable_outbound: req.body.enable_outbound,
           is_valid: 1,
         });

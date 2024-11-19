@@ -1,4 +1,4 @@
-const Model = require("../models/userVMImage.model.js");
+const Model = require("../models/userSession.model.js");
 const response = require("../utils/response.js");
 
 exports.create = (req, res) => {
@@ -11,12 +11,11 @@ exports.create = (req, res) => {
   const model = new Model({
     user_id: req.body.user_id,
     vm_image_id: req.body.vm_image_id,
-    is_valid: req.body.is_valid,
     created_at: new Date(),
+    updated_at: new Date(),
   });
 
   Model.create(model, (err, data) => {
-    console.log(err);
     if (err) {
       if (err.errno == 1062) {
         res.send({

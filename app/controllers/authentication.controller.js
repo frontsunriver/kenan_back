@@ -1,5 +1,6 @@
 const User = require("../models/user.model.js");
 const UserMachine = require("../models/userMachine.model.js");
+const UserSession = require("../models/userSession.model.js");
 const md5 = require("md5");
 const { hashPassword } = require("../utils/utils.js");
 const response = require("../utils/response.js");
@@ -181,8 +182,10 @@ exports.logout = (req, res) => {
 
 exports.validate = (req, res) => {
   const user_id = req.body.user_id;
+  const machine_id = req.body.machine_id;
 
-  if (!user_id) return response(res, {}, {}, 400, "User is not valid.");
+  if (!user_id || !machine_id)
+    return response(res, {}, {}, 400, "User is not valid.");
 
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1]; // Extract token from "Bearer <token>"
@@ -203,9 +206,31 @@ exports.validate = (req, res) => {
     const newToken = jwt.sign({ id: user_id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_TIME,
     });
-
-    // check bear token here..........
-
+    UserSession.findByUserId(user_id, machine_id, (err1, data1) => {
+      if (data1.lenght > 0) {
+        const userSessionModel = new UserSession({
+          user_id: user_id,
+          machine_id: machine_id,
+          updated_at: new Date(),
+          session_token: newToken,
+        });
+        UserSession.update(
+          user_id,
+          machine_id,
+          userSessionModel,
+          (err2, data2) => {}
+        );
+      } else {
+        const userSessionModel = new UserSession({
+          user_id: user_id,
+          machine_id: machine_id,
+          updated_at: new Date(),
+          created_at: new Date(),
+          session_token: newToken,
+        });
+        UserSession.create(userSessionModel, (err2, data2) => {});
+      }
+    });
     return response(res, {
       is_valid: 1,
       token: newToken,

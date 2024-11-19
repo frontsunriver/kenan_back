@@ -73,6 +73,34 @@ exports.findById = (req, res) => {
   }
 };
 
+exports.findByUserId = (req, res) => {
+  if (!req.body) {
+    res.send({
+      success: false,
+      message: "Content can not be empty!",
+    });
+  }
+  const id = req.body.user_id;
+  const user_type = req.body.user_type;
+  try {
+    Model.findByUserId(id, user_type, (err, data) => {
+      if (err)
+        res.send({
+          success: false,
+          message: err.message || "Something went wrong",
+        });
+      else {
+        return res.send({ success: true, data: data });
+      }
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: "Wrong Parameter!",
+    });
+  }
+};
+
 exports.update = (req, res) => {
   if (!req.body) {
     res.status(400).send({

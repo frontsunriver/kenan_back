@@ -4,11 +4,13 @@ module.exports = (app) => {
   const vmImageDownload = require("../controllers/vmImageDownload.controller.js");
   const machine = require("../controllers/userMachine.controller.js");
   const admin = require("../controllers/admin.controller.js");
+  const adminRole = require("../controllers/adminRole.controller.js");
   const port = require("../controllers/port.controller.js");
   const userPort = require("../controllers/userPort.controller.js");
   const user = require("../controllers/users.controller.js");
   const userConfig = require("../controllers/userConfig.controller.js");
-  const userVMImage = require("../controllers/userVmImageController.js");
+  const userSession = require("../controllers/userSession.controller.js");
+  const userVMImage = require("../controllers/userVmImage.controller.js");
   const logs = require("../controllers/log.controller.js");
   const session = require("../controllers/session.controller.js");
   const { authenticateToken } = require("../utils/utils.js");
@@ -92,19 +94,33 @@ module.exports = (app) => {
   router.post("/userconfig/update", userConfig.update);
   router.post("/userconfig/remove", userConfig.remove);
 
+  // User Sessions API
+  router.post("/userSession/create", userSession.create);
+  router.post("/userSession/getAll", userSession.getAll);
+
   // Admin API
   router.post("/admin/signin", admin.signin);
   router.post("/admin/signup", admin.signup);
+  router.post("/admin/create", admin.create);
   router.post("/admin/getAll", admin.getAll);
   router.post("/admin/findById", admin.findById);
   router.post("/admin/update", admin.update);
   router.post("/admin/updatePassword", admin.updatePassword);
   router.post("/admin/remove", admin.remove);
 
+  // Admin Role API
+  router.post("/adminRole/findById", adminRole.findById);
+  router.post("/adminRole/findRoot", adminRole.findRoot);
+  router.post("/adminRole/childRole", adminRole.childRole);
+  router.post("/adminRole/addRole", adminRole.addRole);
+  router.post("/adminRole/removeRole", adminRole.removeRole);
+  router.post("/adminRole/update", adminRole.batchUpdate);
+
   // Logs API
   router.post("/logs/create", logs.create);
   router.post("/logs/getAll", logs.getAll);
   router.post("/logs/findById", logs.findById);
+  router.post("/logs/findByUserId", logs.findByUserId);
   router.post("/logs/update", logs.update);
   router.post("/logs/remove", logs.remove);
 

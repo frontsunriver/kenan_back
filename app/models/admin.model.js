@@ -2,7 +2,6 @@ const sql = require("./db.js");
 
 // constructor
 const Admin = function (user) {
-  this.name = user.name;
   this.email = user.email;
   this.password = user.password;
   this.last_login_at = user.last_login_at;
@@ -53,7 +52,8 @@ Admin.signin = (email, password, result) => {
 
 Admin.addLoginCount = (id, result) => {
   sql.query(
-    `update admins set login_count = (select login_count from admins where id = ${id}) + 1, last_login_at = ? where id = ${id}`, [new Date()],
+    `update admins set login_count = (select login_count from admins where id = ${id}) + 1, last_login_at = ? where id = ${id}`,
+    [new Date()],
     (err, res) => {
       if (err) {
         result(null, err);

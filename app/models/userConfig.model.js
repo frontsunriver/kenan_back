@@ -2,7 +2,11 @@ const sql = require("./db.js");
 
 const UserConfig = function (model) {
   this.user_id = model.user_id;
-  this.copy_to_vm = model.copy_to_vm;
+  this.copy_file_to_vm = model.copy_file_to_vm;
+  this.copy_file_from_vm = model.copy_file_from_vm;
+  this.copy_text_to_vm = model.copy_text_to_vm;
+  this.copy_text_from_vm = model.copy_text_from_vm;
+  this.allow_screenshot = model.allow_screenshot;
   this.enable_outbound = model.enable_outbound;
   this.is_valid = model.is_valid;
 };
@@ -97,8 +101,17 @@ UserConfig.update = (id, model, result) => {
 
 UserConfig.updateByUserId = (id, model, result) => {
   sql.query(
-    "UPDATE user_configs SET user_id = ?, copy_to_vm = ?, enable_outbound = ? WHERE user_id = ?",
-    [model.user_id, model.copy_to_vm, model.enable_outbound, id],
+    "UPDATE user_configs SET user_id = ?, copy_text_to_vm = ?, copy_text_from_vm = ?, copy_file_to_vm = ?, copy_file_from_vm = ?, allow_screenshot = ?, enable_outbound = ? WHERE user_id = ?",
+    [
+      model.user_id,
+      model.copy_text_to_vm,
+      model.copy_text_from_vm,
+      model.copy_file_to_vm,
+      model.copy_file_from_vm,
+      model.allow_screenshot,
+      model.enable_outbound,
+      id,
+    ],
     (err, res) => {
       if (err) {
         result(null, err);

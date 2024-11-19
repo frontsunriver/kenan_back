@@ -1,8 +1,9 @@
 const sql = require("./db.js");
 
 const LogsModel = function (model) {
-  this.object_type = model.object_type;
-  this.object_id = model.object_id;
+  this.user_type = model.user_type;
+  this.user_email = model.user_email;
+  this.user_id = model.user_id;
   this.object_title = model.object_title;
   this.action = model.action;
   this.details = model.details;
@@ -37,6 +38,21 @@ LogsModel.findById = (id, result) => {
   });
 };
 
+LogsModel.findByUserId = (id, user_type, result) => {
+  sql.query(
+    `SELECT * FROM logs WHERE user_id = ${id} and user_type = ${user_type}`,
+    (err, res) => {
+      console.log(err);
+      if (err) {
+        result(err, null);
+        return;
+      }
+
+      return result(null, res);
+    }
+  );
+};
+
 LogsModel.getAll = (keyword, flag, result) => {
   let query = "SELECT * from logs where 1=1 ";
 
@@ -62,10 +78,11 @@ LogsModel.getAll = (keyword, flag, result) => {
 
 LogsModel.update = (id, model, result) => {
   sql.query(
-    "UPDATE logs SET object_type = ?, object_id = ?, object_title = ?, action = ?, detail = ?, time = ? WHERE id = ?",
+    "UPDATE logs SET user_type = ?, user_id = ?, user_email = ?, object_title = ?, action = ?, detail = ?, time = ? WHERE id = ?",
     [
-      model.object_type,
-      model.object_id,
+      model.user_type,
+      model.user_id,
+      model.user_email,
       model.object_title,
       model.action,
       model.detail,
