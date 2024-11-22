@@ -8,7 +8,7 @@ const GroupModel = function (model) {
 };
 
 GroupModel.create = (model, result) => {
-  sql.query("INSERT INTO groups SET ?", model, (err, res) => {
+  sql.query("INSERT INTO groups_db SET ?", model, (err, res) => {
     if (err) {
       result(err, null);
       return;
@@ -19,7 +19,7 @@ GroupModel.create = (model, result) => {
 };
 
 GroupModel.findById = (id, result) => {
-  sql.query(`SELECT * FROM groups WHERE id = ${id}`, (err, res) => {
+  sql.query(`SELECT * FROM groups_db WHERE id = ${id}`, (err, res) => {
     if (err) {
       result(err, null);
       return;
@@ -31,14 +31,14 @@ GroupModel.findById = (id, result) => {
 };
 
 GroupModel.getAll = (keyword, flag, result) => {
-  let query = "SELECT * from groups where 1=1 ";
+  let query = "SELECT * from groups_db where 1=1 ";
 
   if (keyword) {
     query += ` and (name like '%${keyword}%')`;
   }
 
   if (flag) {
-    query += ` and groups.is_valid = ${flag}`;
+    query += ` and groups_db.is_valid = ${flag}`;
   }
 
   sql.query(query, (err, res) => {
@@ -53,7 +53,7 @@ GroupModel.getAll = (keyword, flag, result) => {
 
 GroupModel.update = (id, model, result) => {
   sql.query(
-    "UPDATE groups SET name = ?, updated_at = ?, is_valid = ? WHERE id = ?",
+    "UPDATE groups_db SET name = ?, updated_at = ?, is_valid = ? WHERE id = ?",
     [model.name, model.updated_at, model.is_valid, id],
     (err, res) => {
       if (err) {
@@ -66,7 +66,7 @@ GroupModel.update = (id, model, result) => {
 };
 
 GroupModel.remove = (id, result) => {
-  sql.query("DELETE FROM groups WHERE id = ?", id, (err, res) => {
+  sql.query("DELETE FROM groups_db WHERE id = ?", id, (err, res) => {
     if (err) {
       result(null, err);
       return;
@@ -77,7 +77,7 @@ GroupModel.remove = (id, result) => {
 };
 
 GroupModel.removeAll = (result) => {
-  sql.query("DELETE FROM groups", (err, res) => {
+  sql.query("DELETE FROM groups_db", (err, res) => {
     if (err) {
       result(null, err);
       return;

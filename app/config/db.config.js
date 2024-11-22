@@ -6,8 +6,8 @@
 // };
 
 module.exports = {
-  HOST: "10.6.0.6",
-  USER: "kenanserver",
+  HOST: "localhost",
+  USER: "kenandatabase",
   PASSWORD: "Kenan@12345",
   DB: "kenan_db",
 };
