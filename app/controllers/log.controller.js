@@ -7,8 +7,9 @@ exports.create = (req, res) => {
     });
   }
   const model = new Model({
-    object_type: req.body.object_type,
-    object_id: req.body.object_id,
+    user_type: req.body.user_type,
+    user_id: req.body.user_id,
+    user_email: req.body.user_email,
     object_title: req.body.object_title,
     action: req.body.action,
     details: req.body.details,
@@ -145,5 +146,38 @@ exports.remove = (req, res) => {
     else {
       res.send({ success: true, data: data });
     }
+  });
+};
+
+exports.updateStatus = (req, res) => {
+  if (!req.body) {
+    return response(res, {}, {}, 400, "Bad Request.");
+  }
+
+  const id = req.body.id;
+  const action = req.body.action;
+  const user_id = req.body.user_id;
+
+  if (!id || !action || !user_id) {
+    return response(res, {}, {}, 400, "Bad Request.");
+  }
+
+  const model = new Model({
+    user_type: 0,
+    user_id: user_id,
+    object_title: "VM Title",
+    action: "VM Image action",
+    detail: action,
+    time: new Date(),
+  });
+
+  Model.create(model, (err, data) => {
+    if (err)
+      res.send({
+        success: false,
+        message:
+          err.message || "Some error occurred while creating the Tutorial.",
+      });
+    else res.send({ success: true, data: data });
   });
 };

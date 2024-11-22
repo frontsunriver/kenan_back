@@ -2,7 +2,12 @@ const User = require("../models/user.model.js");
 const UserMachine = require("../models/userMachine.model.js");
 const UserSession = require("../models/userSession.model.js");
 const md5 = require("md5");
-const { hashPassword } = require("../utils/utils.js");
+const {
+  hashPassword,
+  makeLogs,
+  generateRandomOTP,
+  sendMail,
+} = require("../utils/utils.js");
 const response = require("../utils/response.js");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, JWT_EXPIRES_TIME } = require("../config/constant.js");
@@ -150,7 +155,6 @@ exports.googleCreatorRegister = (req, res) => {
 
 exports.login = (req, res) => {
   const email = req.body.email;
-  // const password = md5(req.body.password);
   const password = req.body.password;
 
   if (!email || !password)
@@ -163,6 +167,33 @@ exports.login = (req, res) => {
       });
     else {
       if (data[0]) {
+        // const otpValue = generateRandomOTP();
+        // User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
+        //   if (otpErr) {
+        //     response(res, {}, {}, 400, "Something went wrong.");
+        //   }
+        //   sendMail(otpValue, email);
+        //   makeLogs(
+        //     0,
+        //     data[0].id,
+        //     email,
+        //     email,
+        //     "Login",
+        //     req.headers["x-forwarded-for"] || req.ip
+        //   );
+        //   return response(res, {
+        //     user: data[0],
+        //     message: "User log in successfully",
+        //   });
+        // });
+        makeLogs(
+          0,
+          data[0].id,
+          email,
+          email,
+          "Login",
+          req.headers["x-forwarded-for"] || req.ip
+        );
         return response(res, {
           user: data[0],
           message: "User log in successfully",
@@ -207,10 +238,12 @@ exports.validate = (req, res) => {
       expiresIn: JWT_EXPIRES_TIME,
     });
     UserSession.findByUserId(user_id, machine_id, (err1, data1) => {
+      console.log("validate----------------", data1, newToken);
       if (data1.lenght > 0) {
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
+          ip: req.headers["x-forwarded-for"] || req.ip,
           updated_at: new Date(),
           session_token: newToken,
         });
@@ -226,6 +259,7 @@ exports.validate = (req, res) => {
           machine_id: machine_id,
           updated_at: new Date(),
           created_at: new Date(),
+          ip: req.headers["x-forwarded-for"] || req.ip,
           session_token: newToken,
         });
         UserSession.create(userSessionModel, (err2, data2) => {});
@@ -264,6 +298,15 @@ exports.checkOTP = (req, res) => {
             });
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
             User.updateLoginCount(user_id, (err3, data3) => {});
+            // Logs  oject_title: 'user_email' action: checkOTP detail: correct: + otp parameter
+            makeLogs(
+              0,
+              user_id,
+              data[0].email,
+              data[0].email,
+              "checkOTP",
+              `Correct: ${otp}`
+            );
             return response(res, {
               token: token,
               user: data[0],
@@ -274,6 +317,7 @@ exports.checkOTP = (req, res) => {
           }
         });
       } else {
+        // Logs  oject_title: 'user_email' action: checkOTP detail: incorrect: otp parameter
         return response(res, {}, {}, 400, "Code is not correct.");
       }
     }

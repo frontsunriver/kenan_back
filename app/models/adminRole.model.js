@@ -104,19 +104,24 @@ AdminRole.batchUpdate = (id, models, result) => {
       result(null, err);
       return;
     }
-    const values = models.map((model) => [id, model.id]);
-    const query = `
-    INSERT INTO admin_roles (user_id, role_id)
-    VALUES ?`;
+    if (models.length > 0) {
+      const values = models.map((model) => [id, model.id]);
+      const query = `
+      INSERT INTO admin_roles (user_id, role_id)
+      VALUES ?`;
 
-    sql.query(query, [values], (err, res) => {
-      if (err) {
-        result(err, null);
-        return;
-      }
+      sql.query(query, [values], (err, res) => {
+        if (err) {
+          result(err, null);
+          return;
+        }
 
-      result(null, { affectedRows: res.affectedRows });
-    });
+        result(null, { affectedRows: res.affectedRows });
+      });
+    } else {
+      result(null, res);
+      return;
+    }
   });
 };
 

@@ -2,6 +2,7 @@ const Model = require("../models/vmImages.model.js");
 const DownloadModel = require("../models/vmImageDownload.model.js");
 const response = require("../utils/response.js");
 const fs = require("fs");
+const { makeLogs } = require("../utils/utils.js");
 
 exports.create = async (req, res) => {
   // Validate request
@@ -185,6 +186,14 @@ exports.download = (req, res) => {
     }
 
     const downloadUrl = data[0].download_url;
+    makeLogs(
+      0,
+      user_id,
+      "",
+      data[0].title,
+      "VM Image Download Start",
+      data[0].download_url
+    );
 
     res.download(downloadUrl, (err) => {
       if (err) {
@@ -203,7 +212,6 @@ exports.download = (req, res) => {
         DownloadModel.create(model, (err1) => {
           if (err1) {
             console.error("Error saving download record:", err1);
-            // Handle the error but do not send another response
           }
         });
 

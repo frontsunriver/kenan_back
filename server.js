@@ -1,17 +1,15 @@
 const express = require("express");
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const route = require("./app/routes/routes.js");
 const multer = require("multer");
-// const multerS3 = require("multer-s3");
+const https = require("https");
 const app = express();
+// const multerS3 = require("multer-s3");
+// const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 // const db = require("./app/models/db.js");
 // const { Server } = require("socket.io");
-const user = require("./app/controllers/users.controller.js");
-const { LIVE_SECRET } = require("./app/config/constant.js");
-const jwt = require("jsonwebtoken");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
@@ -188,7 +186,16 @@ const imageUpload = multer({ storage: storage });
 //   res.send({ token: token, userId: userId });
 // });
 
+const options = {
+  key: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.key'), // Update with your key file path
+  cert: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.crt') // Update with your cert file path
+};
+
 route(app);
+
+app.get("/", (req, res, next)=> {
+  res.send("Server is running");
+});
 
 // app.use("/", (req, res, next) =>
 //   // in deployment we send index.html for all additional paths not defined by our express routes
@@ -197,7 +204,11 @@ route(app);
 // );
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8000;
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+const PORT = process.env.PORT || 443;
+// const server = app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}.`);
+// });
+
+https.createServer(options, app).listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
 });

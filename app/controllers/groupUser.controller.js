@@ -1,4 +1,4 @@
-const Model = require("../models/userPort.model.js");
+const Model = require("../models/groupUser.model.js");
 const response = require("../utils/response.js");
 
 exports.create = (req, res) => {
@@ -9,27 +9,17 @@ exports.create = (req, res) => {
   }
   const model = new Model({
     user_id: req.body.user_id,
-    port_map_id: req.body.port_map_id,
+    group_id: req.body.group_id,
     is_valid: req.body.is_valid,
   });
 
   Model.create(model, (err, data) => {
-    if (err) {
-      if (err.errno == 1062) {
-        res.send({
-          success: false,
-          message:
-            "User can't have same port",
-        });
-      } else {
-        res.send({
-          success: false,
-          message:
-            err.message || "Some error occurred while creating the Tutorial.",
-        });
-      }
-
-    }
+    if (err)
+      res.send({
+        success: false,
+        message:
+          err.message || "Some error occurred while creating the Tutorial.",
+      });
     else res.send({ success: true, data: data });
   });
 };
@@ -39,17 +29,9 @@ exports.getAll = (req, res) => {
   const keyword = req.body.keyword;
 
   Model.getAll(keyword, flag, (err, data) => {
-    if (err)
-      res.send({
-        success: false,
-        message: err.message || "Something went wrong",
-      });
+    if (err) return response(res, {}, {}, 500, "Something went wrong.");
     else {
-      if (data) {
-        res.send({ success: true, data: data });
-      } else {
-        res.send({ success: true, message: [] });
-      }
+      return response(res, { data: data });
     }
   });
 };
@@ -62,7 +44,6 @@ exports.findById = (req, res) => {
   const id = req.body.id;
   try {
     Model.findById(id, (err, data) => {
-      console.log(err);
       if (err) return response(res, {}, {}, 500, "Something went wrong.");
       else {
         return response(res, {
@@ -80,29 +61,9 @@ exports.findByUserId = (req, res) => {
     return response(res, {}, {}, 400, "Bad Request.");
   }
 
-  const id = req.body.user_id;
+  const user_id = req.body.user_id;
   try {
-    Model.findByUserId(id, (err, data) => {
-      if (err) return response(res, {}, {}, 500, "Something went wrong.");
-      else {
-        return response(res, {
-          data: data,
-        });
-      }
-    });
-  } catch (err) {
-    return response(res, {}, {}, 500, "Something went wrong.");
-  }
-};
-
-exports.getHttpsRules = (req, res) => {
-  if (!req.body) {
-    return response(res, {}, {}, 400, "Bad Request.");
-  }
-
-  const id = req.body.user_id;
-  try {
-    Model.getHttpsRules(id, (err, data) => {
+    Model.findByUserId(user_id, (err, data) => {
       if (err) return response(res, {}, {}, 500, "Something went wrong.");
       else {
         return response(res, {
@@ -151,7 +112,7 @@ exports.update = (req, res) => {
 
   const model = new Model({
     user_id: req.body.user_id,
-    port_map_id: req.body.port_map_id,
+    group_id: req.body.group_id,
     is_valid: req.body.is_valid,
   });
 

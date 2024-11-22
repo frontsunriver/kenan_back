@@ -85,6 +85,20 @@ User.update = (id, user, result) => {
   );
 };
 
+User.updateOtp = (id, otp, result) => {
+  sql.query(
+    "UPDATE users SET opt_secret = ? WHERE id = ?",
+    [otp, id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      return result(null, res);
+    }
+  );
+};
+
 User.updatePassword = (id, user, result) => {
   sql.query(
     "UPDATE users SET password = ? WHERE id = ?",

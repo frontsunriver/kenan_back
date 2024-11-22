@@ -5,6 +5,7 @@ const UserSessionModel = function (model) {
   this.machine_id = model.machine_id;
   this.created_at = model.created_at;
   this.updated_at = model.updated_at;
+  this.ip = model.ip;
   this.session_token = model.session_token;
 };
 
@@ -21,7 +22,8 @@ UserSessionModel.create = (model, result) => {
 
 UserSessionModel.findByUserId = (user_id, machine_id, result) => {
   sql.query(
-    `SELECT * FROM user_sessions WHERE user_id = ${user_id} and machine_id = '${machine_id}'`,
+    `SELECT * FROM user_sessions WHERE user_id = ? and machine_id = ?`,
+    [user_id, machine_id],
     (err, res) => {
       if (err) {
         result(err, null);
@@ -61,8 +63,8 @@ UserSessionModel.getAll = (keyword, flag, result) => {
 
 UserSessionModel.update = (user_id, machine_id, model, result) => {
   sql.query(
-    "UPDATE user_sessions SET updated_at = ? WHERE user_id = ? and machine_id = ?",
-    [model.updated_at, user_id, machine_id],
+    "UPDATE user_sessions SET updated_at = ?, ip = ?, session_token = ? WHERE user_id = ? and machine_id = ?",
+    [model.updated_at, model.ip, model.session_token, user_id, machine_id],
     (err, res) => {
       if (err) {
         result(null, err);

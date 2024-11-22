@@ -1,16 +1,18 @@
 module.exports = (app) => {
   const authentication = require("../controllers/authentication.controller.js");
   const vmImages = require("../controllers/vmImages.controller.js");
+  const user = require("../controllers/users.controller.js");
+  const group = require("../controllers/group.controller.js");
+  const groupVmImage = require("../controllers/groupVmImage.controller.js");
+  const groupPort = require("../controllers/groupPort.controller.js");
+  const groupUser = require("../controllers/groupUser.controller.js");
   const vmImageDownload = require("../controllers/vmImageDownload.controller.js");
   const machine = require("../controllers/userMachine.controller.js");
   const admin = require("../controllers/admin.controller.js");
   const adminRole = require("../controllers/adminRole.controller.js");
   const port = require("../controllers/port.controller.js");
-  const userPort = require("../controllers/userPort.controller.js");
-  const user = require("../controllers/users.controller.js");
-  const userConfig = require("../controllers/userConfig.controller.js");
+  const groupConfig = require("../controllers/groupConfig.controller.js");
   const userSession = require("../controllers/userSession.controller.js");
-  const userVMImage = require("../controllers/userVmImage.controller.js");
   const logs = require("../controllers/log.controller.js");
   const session = require("../controllers/session.controller.js");
   const { authenticateToken } = require("../utils/utils.js");
@@ -31,7 +33,25 @@ module.exports = (app) => {
   router.post("/user/remove", user.remove);
 
   // CLIENT
-  router.post("/user/config", authenticateToken, userConfig.findByUserId);
+  // router.post("/user/config", authenticateToken, groupConfig.findByUserId);
+  router.post("/user/config", groupConfig.findByUserId);
+  router.post("/user/check_config", groupConfig.checkConfig);
+
+  // Group API ADMIN
+  router.post("/group/create", group.create);
+  router.post("/group/getAll", group.getAll);
+  router.post("/group/findById", group.findById);
+  router.post("/group/update", group.update);
+  router.post("/group/remove", group.remove);
+
+  // Group User API ADMIN
+  router.post("/groupUser/create", groupUser.create);
+  router.post("/groupUser/getAll", groupUser.getAll);
+  router.post("/groupUser/findById", groupUser.findById);
+  router.post("/groupUser/findByUserId", groupUser.findByUserId);
+  router.post("/groupUser/batchUpdate", groupUser.batchUpdate);
+  router.post("/groupUser/update", groupUser.update);
+  router.post("/groupUser/remove", groupUser.remove);
 
   // VM Images API ADMIN
   router.post("/vmimage/create", vmImages.create);
@@ -41,9 +61,8 @@ module.exports = (app) => {
   router.post("/vmimage/remove", vmImages.remove);
 
   // CLIENT
-  router.post("/vm-image/list", authenticateToken, userVMImage.findByUserId);
   router.post("/vm-image/download", authenticateToken, vmImages.download);
-  router.post("/vm-image/report-action", userVMImage.updateStatus);
+  router.post("/vm-image/report-action", logs.updateStatus);
 
   // Port API ADMIN
   router.post("/port/create", port.create);
@@ -53,12 +72,6 @@ module.exports = (app) => {
   router.post("/port/remove", port.remove);
 
   // CLIENT
-  router.post("/network/user-rules", authenticateToken, userPort.findByUserId);
-  router.post(
-    "/network/https-rules",
-    authenticateToken,
-    userPort.getHttpsRules
-  );
   router.post("/network/routing-rules", port.getAll);
 
   // User Machine API
@@ -68,31 +81,31 @@ module.exports = (app) => {
   router.post("/usermachine/update", machine.update);
   router.post("/usermachine/remove", machine.remove);
 
-  // User Port API
-  router.post("/userPort/create", userPort.create);
-  router.post("/userPort/getAll", userPort.getAll);
-  router.post("/userPort/findById", userPort.findById);
-  router.post("/userPort/findByUserId", userPort.findByUserId);
-  router.post("/userPort/batchUpdate", userPort.batchUpdate);
-  router.post("/userPort/update", userPort.update);
-  router.post("/userPort/remove", userPort.remove);
+  // Group Port API
+  router.post("/groupPort/create", groupPort.create);
+  router.post("/groupPort/getAll", groupPort.getAll);
+  router.post("/groupPort/findById", groupPort.findById);
+  router.post("/groupPort/findByGroupId", groupPort.findByGroupId);
+  router.post("/groupPort/batchUpdate", groupPort.batchUpdate);
+  router.post("/groupPort/update", groupPort.update);
+  router.post("/groupPort/remove", groupPort.remove);
 
-  // User VM API
-  router.post("/uservm/create", userVMImage.create);
-  router.post("/uservm/getAll", userVMImage.getAll);
-  router.post("/uservm/findById", userVMImage.findById);
-  router.post("/uservm/findByUserId", userVMImage.findByUserId);
-  router.post("/uservm/update", userVMImage.update);
-  router.post("/uservm/batchUpdate", userVMImage.batchUpdate);
-  router.post("/uservm/remove", userVMImage.remove);
+  // Group VM API
+  router.post("/groupvm/create", groupVmImage.create);
+  router.post("/groupvm/getAll", groupVmImage.getAll);
+  router.post("/groupvm/findById", groupVmImage.findById);
+  router.post("/groupvm/findByGroupId", groupVmImage.findByGroupId);
+  router.post("/groupvm/update", groupVmImage.update);
+  router.post("/groupvm/batchUpdate", groupVmImage.batchUpdate);
+  router.post("/groupvm/remove", groupVmImage.remove);
 
-  // User Config API
-  router.post("/userconfig/create", userConfig.create);
-  router.post("/userconfig/getAll", userConfig.getAll);
-  router.post("/userconfig/findById", userConfig.findById);
-  router.post("/userconfig/findByUserId", userConfig.findByUserId1);
-  router.post("/userconfig/update", userConfig.update);
-  router.post("/userconfig/remove", userConfig.remove);
+  // Group Config API
+  router.post("/groupConfig/create", groupConfig.create);
+  router.post("/groupConfig/getAll", groupConfig.getAll);
+  router.post("/groupConfig/findById", groupConfig.findById);
+  router.post("/groupConfig/findByGroupId", groupConfig.findByGroupId);
+  router.post("/groupConfig/update", groupConfig.update);
+  router.post("/groupConfig/remove", groupConfig.remove);
 
   // User Sessions API
   router.post("/userSession/create", userSession.create);
