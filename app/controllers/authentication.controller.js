@@ -6,7 +6,6 @@ const {
   hashPassword,
   makeLogs,
   generateRandomOTP,
-  sendMail,
 } = require("../utils/utils.js");
 const response = require("../utils/response.js");
 const jwt = require("jsonwebtoken");
