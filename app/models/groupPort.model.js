@@ -19,7 +19,7 @@ GroupPortModel.create = (model, result) => {
 
 GroupPortModel.findById = (id, result) => {
   sql.query(
-    `SELECT group_ports.*, groups.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target FROM group_ports left join groups on groups.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.id = ${id}`,
+    `SELECT group_ports.*, groups_db.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target FROM group_ports left join groups_db on groups_db.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.id = ${id}`,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -34,7 +34,7 @@ GroupPortModel.findById = (id, result) => {
 
 GroupPortModel.findByGroupId = (id, result) => {
   sql.query(
-    `SELECT group_ports.*, groups.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target_port FROM group_ports left join groups on groups.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.group_id = ${id}`,
+    `SELECT group_ports.*, groups_db.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target_port FROM group_ports left join groups_db on groups_db.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.group_id = ${id}`,
     (err, res) => {
       if (err) {
         console.log(err);
@@ -50,7 +50,7 @@ GroupPortModel.findByGroupId = (id, result) => {
 
 GroupPortModel.getHttpsRules = (id, result) => {
   sql.query(
-    `SELECT group_ports.*, groups.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target_port FROM group_ports left join groups on groups.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.group_id = ${id} and group_ports.is_https = 1`,
+    `SELECT group_ports.*, groups_db.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target_port FROM group_ports left join groups_db on groups_db.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.group_id = ${id} and group_ports.is_https = 1`,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -65,10 +65,10 @@ GroupPortModel.getHttpsRules = (id, result) => {
 
 GroupPortModel.getAll = (keyword, flag, result) => {
   let query =
-    "SELECT group_ports.*, groups.name, port_map.title, port_map.listen_port, port_map.target_port, port_map.is_https, port_map.target from group_ports left join groups on group_ports.user_id = groups.id left join port_map on port_map.id = group_ports.port_map_id where 1=1 ";
+    "SELECT group_ports.*, groups_db.name, port_map.title, port_map.listen_port, port_map.target_port, port_map.is_https, port_map.target from group_ports left join groups_db on group_ports.user_id = groups_db.id left join port_map on port_map.id = group_ports.port_map_id where 1=1 ";
 
   if (keyword) {
-    query += ` and (groups.name LIKE '%${keyword}%' or port_map.title LIKE '%${keyword}%' or port_map.target_port LIKE '%${keyword}%' or port_map.target LIKE '%${keyword}%' or port_map.listen_port LIKE '%${keyword}%')`;
+    query += ` and (groups_db.name LIKE '%${keyword}%' or port_map.title LIKE '%${keyword}%' or port_map.target_port LIKE '%${keyword}%' or port_map.target LIKE '%${keyword}%' or port_map.listen_port LIKE '%${keyword}%')`;
   }
 
   if (flag) {

@@ -21,7 +21,7 @@ GroupVMImage.create = (model, result) => {
 
 GroupVMImage.findById = (id, result) => {
   sql.query(
-    `SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, groups.name FROM group_vm_images left join groups on groups.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id WHERE group_vm_images.id = ${id}`,
+    `SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, groups_db.name FROM group_vm_images left join groups_db on groups_db.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id WHERE group_vm_images.id = ${id}`,
     (err, res) => {
       if (err) {
         console.log(err);
@@ -37,7 +37,7 @@ GroupVMImage.findById = (id, result) => {
 
 GroupVMImage.findByGroupId = (id, result) => {
   sql.query(
-    `SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, groups.name FROM group_vm_images left join groups on groups.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id WHERE group_vm_images.group_id = ${id}`,
+    `SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, groups_db.name FROM group_vm_images left join groups_db on groups_db.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id WHERE group_vm_images.group_id = ${id}`,
     (err, res) => {
       if (err) {
         console.log(err);
@@ -52,10 +52,10 @@ GroupVMImage.findByGroupId = (id, result) => {
 
 GroupVMImage.getAll = (keyword, flag, result) => {
   let query =
-    "SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, users.email, users.login_count FROM group_vm_images left join groups on groups.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id where 1=1 ";
+    "SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, users.email, users.login_count FROM group_vm_images left join groups_db on groups_db.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id where 1=1 ";
 
   if (keyword) {
-    query += ` and (groups.name LIKE '%${keyword}%' or vm_images.title LIKE '%${keyword}%' or vm_images.description LIKE '%${keyword}%' or vm_images.download_url LIKE '%${keyword}%')`;
+    query += ` and (groups_db.name LIKE '%${keyword}%' or vm_images.title LIKE '%${keyword}%' or vm_images.description LIKE '%${keyword}%' or vm_images.download_url LIKE '%${keyword}%')`;
   }
 
   if (flag) {

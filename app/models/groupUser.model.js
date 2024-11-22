@@ -43,10 +43,10 @@ GroupUserModel.findByUserId = (id, result) => {
 
 GroupUserModel.getAll = (keyword, flag, result) => {
   let query =
-    "SELECT group_users.*, users.email, groups.name from group_users left join users on users.id = group_users.user_id left join groups on groups.id = group_users.group_id where 1=1 ";
+    "SELECT group_users.*, users.email, groups_db.name from group_users left join users on users.id = group_users.user_id left join groups_db on groups_db.id = group_users.group_id where 1=1 ";
 
   if (keyword) {
-    query += ` and (users.email like '%${keyword}%' or groups.name like '%${keyword}%')`;
+    query += ` and (users.email like '%${keyword}%' or groups_db.name like '%${keyword}%')`;
   }
 
   if (flag) {

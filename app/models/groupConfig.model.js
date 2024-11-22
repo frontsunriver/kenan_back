@@ -78,7 +78,7 @@ GroupConfig.getUserConfig = (group_id, result) => {
 
 GroupConfig.findByUserId = (id, result) => {
   sql.query(
-    `select group_users.group_id, groups.name, port_map.* from group_users left join groups on groups.id = group_users.group_id left join group_ports on group_ports.group_id = group_users.group_id left join port_map on group_ports.port_map_id = port_map.id where group_users.user_id = ${id}`,
+    `select group_users.group_id, groups_db.name, port_map.* from group_users left join groups_db on groups_db.id = group_users.group_id left join group_ports on group_ports.group_id = group_users.group_id left join port_map on group_ports.port_map_id = port_map.id where group_users.user_id = ${id}`,
     (err, portRes) => {
       if (err) {
         console.log(err);
@@ -90,11 +90,11 @@ GroupConfig.findByUserId = (id, result) => {
       sql.query(
         `SELECT
               group_users.group_id,
-              groups.NAME,
+              groups_db.NAME,
               vm_images.* 
             FROM
               group_users
-              LEFT JOIN groups ON groups.id = group_users.group_id
+              LEFT JOIN groups_db ON groups_db.id = group_users.group_id
               LEFT JOIN group_vm_images ON group_vm_images.group_id = group_users.group_id
               LEFT JOIN vm_images ON group_vm_images.vm_image_id = vm_images.id 
             WHERE
