@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const route = require("./app/routes/routes.js");
 const multer = require("multer");
 const https = require("https");
+const fs = require("fs");
 const app = express();
 // const multerS3 = require("multer-s3");
 // const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
@@ -190,12 +191,12 @@ const options = {
   key: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.key'), // Update with your key file path
   cert: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.crt') // Update with your cert file path
 };
-
-route(app);
-
 app.get("/", (req, res, next)=> {
   res.send("Server is running");
 });
+
+route(app);
+
 
 // app.use("/", (req, res, next) =>
 //   // in deployment we send index.html for all additional paths not defined by our express routes
@@ -204,11 +205,13 @@ app.get("/", (req, res, next)=> {
 // );
 
 // set port, listen for requests
-const PORT = process.env.PORT || 443;
+
+// const PORT = process.env.PORT || 8000;
 // const server = app.listen(PORT, () => {
 //   console.log(`Server is running on port ${PORT}.`);
 // });
 
+const PORT = process.env.PORT || 443;
 https.createServer(options, app).listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });
