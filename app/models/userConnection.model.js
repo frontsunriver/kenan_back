@@ -35,13 +35,13 @@ UserConnectionModel.findByUserId = (user_id, machine_id, result) => {
 };
 
 UserConnectionModel.getAll = (keyword, flag, result) => {
-  let query = `Select * from (SELECT *, CASE 
-        WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1 
+  let query = `Select a.*, users.email from (SELECT *, CASE 
+        WHEN updated_at >= NOW() - INTERVAL 60 SECOND THEN 1 
         ELSE 0 
-    END AS status from user_conns where 1=1) a left join users on users.id = a.user_id `;
+    END AS connection_status from user_conns where 1=1) a left join users on users.id = a.user_id where 1=1 `;
 
   if (keyword) {
-    // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
+    query += ` and (users.email LIKE '%${keyword}%' or a.listen_port LIKE '%${keyword}%' or a.machine_id LIKE '%${keyword}%')`;
   }
 
   if (flag) {
