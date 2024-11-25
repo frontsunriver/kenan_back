@@ -13,15 +13,11 @@ module.exports = (app) => {
   const port = require("../controllers/port.controller.js");
   const groupConfig = require("../controllers/groupConfig.controller.js");
   const userSession = require("../controllers/userSession.controller.js");
+  const userConnection = require("../controllers/userConnection.controller.js");
   const logs = require("../controllers/log.controller.js");
   const session = require("../controllers/session.controller.js");
   const { authenticateToken } = require("../utils/utils.js");
   var router = require("express").Router();
-
-  router.post("/auth/login", authentication.login);
-  router.post("/auth/logout", authenticateToken, authentication.logout);
-  router.post("/auth/validate", authenticateToken, authentication.validate);
-  router.post("/auth/checkOTP", authentication.checkOTP);
 
   // User API ADMIN
   router.post("/user/create", user.create);
@@ -31,11 +27,6 @@ module.exports = (app) => {
   router.post("/user/resetPassword", user.resetPassword);
   router.post("/user/updateUserInfo", user.updateUserInfo);
   router.post("/user/remove", user.remove);
-
-  // CLIENT
-  // router.post("/user/config", authenticateToken, groupConfig.findByUserId);
-  router.post("/user/config", groupConfig.findByUserId);
-  router.post("/user/check_config", groupConfig.checkConfig);
 
   // Group API ADMIN
   router.post("/group/create", group.create);
@@ -60,19 +51,12 @@ module.exports = (app) => {
   router.post("/vmimage/update", vmImages.update);
   router.post("/vmimage/remove", vmImages.remove);
 
-  // CLIENT
-  router.post("/vm-image/download", authenticateToken, vmImages.download);
-  router.post("/vm-image/report-action", logs.updateStatus);
-
   // Port API ADMIN
   router.post("/port/create", port.create);
   router.post("/port/getAll", port.getAll);
   router.post("/port/findById", port.findById);
   router.post("/port/update", port.update);
   router.post("/port/remove", port.remove);
-
-  // CLIENT
-  router.post("/network/routing-rules", port.getAll);
 
   // User Machine API
   router.post("/usermachine/create", machine.create);
@@ -111,6 +95,10 @@ module.exports = (app) => {
   router.post("/userSession/create", userSession.create);
   router.post("/userSession/getAll", userSession.getAll);
 
+  // User Connection API
+  router.post("/userConnection/create", userConnection.create);
+  router.post("/userConnection/getAll", userConnection.getAll);
+
   // Admin API
   router.post("/admin/signin", admin.signin);
   router.post("/admin/signup", admin.signup);
@@ -140,6 +128,19 @@ module.exports = (app) => {
   // Session API
   router.post("/session/get", session.getAll);
   router.post("/session/update", session.update);
+
+  // CLIENT
+  router.post("/auth/login", authentication.login);
+  router.post("/auth/logout", authenticateToken, authentication.logout);
+  router.post("/auth/validate", authenticateToken, authentication.validate);
+  router.post("/auth/checkOTP", authentication.checkOTP);
+  // router.post("/user/config", authenticateToken, groupConfig.findByUserId);
+  router.post("/user/config", groupConfig.findByUserId);
+  router.post("/user/check_config", groupConfig.checkConfig);
+  router.post("/vm-image/download", authenticateToken, vmImages.download);
+  router.post("/vm-image/report-action", logs.updateStatus);
+  router.post("/network/routing-rules", port.getAll);
+  router.post("/network/backend-connect", userConnection.create);
 
   app.use("/api/", router);
 };

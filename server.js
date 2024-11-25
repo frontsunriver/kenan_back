@@ -49,64 +49,6 @@ const storage = multer.diskStorage({
 
 const imageUpload = multer({ storage: storage });
 
-// app.post(
-//   "/api/user/updateCreatorProfile",
-//   imageUpload.array("attach"),
-//   (req, res) => {
-//     let fileName = "";
-//     if (req.files.length > 0) {
-//       fileName = req.files[0].location;
-//     } else {
-//       fileName = req.body.attach;
-//     }
-//     req.body.attach = fileName;
-//     user.updateCreatorProfile(req, res);
-//   }
-// );
-
-// app.post(
-//   "/api/user/addGalleries",
-//   imageUpload.array("galleryFiles"),
-//   (req, res) => {
-//     let fileList = [];
-//     let gallery = "";
-
-//     // Handle uploaded files
-//     if (req.files.length > 0) {
-//       req.files.map((file) => {
-//         fileList.push(file.location);
-//       });
-//     }
-
-//     // Handle original files
-//     if (req.body.originalFiles) {
-//       // Convert the comma-separated string back to an array if needed
-//       const originalFilesArray = req.body.originalFiles.split(",");
-//       gallery = originalFilesArray.concat(fileList).join(",");
-//     } else {
-//       gallery = fileList.join(",");
-//     }
-
-//     req.body.gallery = gallery; // Add gallery to req.body
-//     user.addGalleries(req, res);
-//   }
-// );
-
-// app.post(
-//   "/api/user/updateMemberProfile",
-//   imageUpload.array("attach"),
-//   (req, res) => {
-//     let fileName = "";
-//     if (req.files.length > 0) {
-//       fileName = req.files[0].location;
-//     } else {
-//       fileName = req.body.attach;
-//     }
-//     req.body.attach = fileName;
-//     user.updateMemberProfile(req, res);
-//   }
-// );
-
 // app.post("/api/category/create", imageUpload.array("image"), (req, res) => {
 //   let fileName = "";
 //   if (req.files.length > 0) {
@@ -152,19 +94,6 @@ const imageUpload = multer({ storage: storage });
 // );
 
 // app.post(
-//   "/api/event/create",
-//   imageUpload.fields([{ name: "attach", maxCount: 1 }]),
-//   (req, res) => {
-//     let fileName = "";
-//     if (req.files.attach && req.files.attach.length > 0) {
-//       fileName = req.files.attach[0].location;
-//     }
-//     req.body.banner = fileName;
-//     event.create(req, res);
-//   }
-// );
-
-// app.post(
 //   "/api/post/create",
 //   imageUpload.fields([{ name: "attach", maxCount: 1 }]),
 //   (req, res) => {
@@ -177,15 +106,6 @@ const imageUpload = multer({ storage: storage });
 //   }
 // );
 
-// app.post("/api/getLiveStreamToken", (req, res) => {
-//   const userId = req.body.userId;
-//   secret = LIVE_SECRET;
-//   let token = jwt.sign({ user_id: userId }, secret, {
-//     algorithm: "HS256",
-//     expiresIn: "1h", // Set the expiration time as needed
-//   });
-//   res.send({ token: token, userId: userId });
-// });
 
 const options = {
   key: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.key'), // Update with your key file path
