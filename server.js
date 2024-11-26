@@ -7,6 +7,7 @@ const multer = require("multer");
 const https = require("https");
 const fs = require("fs");
 const app = express();
+const {sendMaile} = require("./app/utils/utils.js");
 // const multerS3 = require("multer-s3");
 // const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 // const db = require("./app/models/db.js");
@@ -112,6 +113,7 @@ const options = {
   cert: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.crt') // Update with your cert file path
 };
 app.get("/", (req, res, next)=> {
+  sendMaile('123456', "seriousman217winter@gmail.com")
   res.send("Server is running");
 });
 
