@@ -40,51 +40,51 @@ exports.register = (req, res) => {
   });
 };
 
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
   if (!email || !password)
     return response(res, {}, {}, 400, "Please fill all the required fields.");
 
-  User.signin(email, password, (err, data) => {
+  User.signin(email, password, async (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving user.",
       });
     else {
-      if (data[0]) {
-        // const otpValue = generateRandomOTP();
-        // User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
-        //   if (otpErr) {
-        //     response(res, {}, {}, 400, "Something went wrong.");
-        //   }
-        //   sendMail(otpValue, email);
-        //   makeLogs(
-        //     0,
-        //     data[0].id,
-        //     email,
-        //     email,
-        //     "Login",
-        //     req.headers["x-forwarded-for"] || req.ip
-        //   );
-        //   return response(res, {
-        //     user: data[0],
-        //     message: "User log in successfully",
-        //   });
-        // });
-        makeLogs(
-          0,
-          data[0].id,
-          email,
-          email,
-          "Login",
-          req.headers["x-forwarded-for"] || req.ip
-        );
-        return response(res, {
-          user: data[0],
-          message: "User log in successfully",
+      if (data.length > 0) {
+        const otpValue = generateRandomOTP();
+        User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
+          if (otpErr) {
+            response(res, {}, {}, 400, "Something went wrong.");
+          }
+          sendMail(otpValue, email);
+          makeLogs(
+            0,
+            data[0].id,
+            email,
+            email,
+            "Login",
+            req.headers["x-forwarded-for"] || req.ip
+          );
+          return response(res, {
+            user: data[0],
+            message: "User log in successfully",
+          });
         });
+        // makeLogs(
+        //   0,
+        //   data[0].id,
+        //   email,
+        //   email,
+        //   "Login",
+        //   req.headers["x-forwarded-for"] || req.ip
+        // );
+        // return response(res, {
+        //   user: data[0],
+        //   message: "User log in successfully",
+        // });
       } else {
         return response(res, {}, {}, 400, "User doesn't exist.");
       }
