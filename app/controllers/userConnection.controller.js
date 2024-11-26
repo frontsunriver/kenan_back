@@ -14,15 +14,30 @@ exports.create = (req, res) => {
     updated_at: new Date(),
   });
 
-  Model.create(model, (err, data) => {
-    if (err) {
-      if (err.errno == 1062) {
-        response(res, {}, {}, 500, "Some error occurred.");
-      } else {
-        response(res, {}, {}, 500, "Some error occurred.");
-      }
+  Model.findByUserAndMachinePort(model, (modelError, modelResult) => {
+    if (modelError) {
+      response(res, {}, {}, 500, "Some error occurred.");
+    }
+    if (modelResult > 0) {
+      Model.update(model, (updateError, updateData) => {
+        if (err) {
+          response(res, {}, {}, 500, "Some error occurred.");
+        } else {
+          response(res, { data: updateData, result: "OK" });
+        }
+      });
     } else {
-      response(res, { data: data, "result": "OK" });
+      Model.create(model, (err, data) => {
+        if (err) {
+          if (err.errno == 1062) {
+            response(res, {}, {}, 500, "Some error occurred.");
+          } else {
+            response(res, {}, {}, 500, "Some error occurred.");
+          }
+        } else {
+          response(res, { data: data, result: "OK" });
+        }
+      });
     }
   });
 };

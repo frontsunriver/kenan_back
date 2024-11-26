@@ -138,6 +138,7 @@ exports.update = (req, res) => {
   const model = new Model({
     user_id: req.body.user_id,
     vm_image_id: req.body.vm_image_id,
+    ip: req.headers["x-forwarded-for"] || req.ip,
     is_valid: req.body.is_valid,
   });
 

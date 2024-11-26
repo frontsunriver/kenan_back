@@ -54,7 +54,18 @@ LogsModel.findByUserId = (id, user_type, result) => {
 };
 
 LogsModel.getAll = (keyword, flag, result) => {
-  let query = "SELECT * from logs where 1=1 ";
+  let query = `SELECT 
+              l.*, 
+              CASE 
+                  WHEN l.user_type = 1 THEN a.email 
+                  WHEN l.user_type = 0 THEN u.email
+              END AS email
+          FROM 
+              logs l
+          LEFT JOIN 
+              admins a ON l.user_id = a.id AND l.user_type = 1
+          LEFT JOIN 
+              users u ON l.user_id = u.id AND l.user_type = 0`;
 
   if (keyword) {
     // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
@@ -64,7 +75,7 @@ LogsModel.getAll = (keyword, flag, result) => {
     // query += ` and ports.is_active = ${flag}`;
   }
 
-  query += " order by time desc";
+  query += " order by l.time desc";
 
   sql.query(query, (err, res) => {
     if (err) {

@@ -19,10 +19,10 @@ UserConnectionModel.create = (model, result) => {
   });
 };
 
-UserConnectionModel.findByUserId = (user_id, machine_id, result) => {
+UserConnectionModel.findByUserAndMachinePort = (model, result) => {
   sql.query(
-    `SELECT * FROM user_conns WHERE user_id = ? and machine_id = ?`,
-    [user_id, machine_id],
+    `SELECT * FROM user_conns WHERE user_id = ? and machine_id = ? and listen_port = ?`,
+    [model.user_id, model.machine_id, model.listen_port],
     (err, res) => {
       if (err) {
         result(err, null);
@@ -60,10 +60,16 @@ UserConnectionModel.getAll = (keyword, flag, result) => {
   });
 };
 
-UserConnectionModel.update = (user_id, machine_id, model, result) => {
+UserConnectionModel.update = (model, result) => {
   sql.query(
-    "UPDATE user_conns SET updated_at = ?, status = ? WHERE user_id = ? and machine_id = ?",
-    [model.updated_at, model.status, user_id, machine_id],
+    "UPDATE user_conns SET updated_at = ?, status = ? WHERE user_id = ? and machine_id = ? and listen_port = ?",
+    [
+      model.updated_at,
+      model.status,
+      model.user_id,
+      model.machine_id,
+      model.listen_port,
+    ],
     (err, res) => {
       if (err) {
         result(null, err);

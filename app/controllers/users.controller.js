@@ -11,7 +11,7 @@ exports.create = (req, res) => {
   }
   const user = new User({
     email: req.body.email,
-    password: hashPassword("123456"),
+    password: hashPassword(req.body.password),
     is_valid: req.body.is_valid,
     otp_secret: "123456",
     login_count: 0,
@@ -115,7 +115,7 @@ exports.resetPassword = (req, res) => {
   const id = req.body.id;
 
   const user = new User({
-    password: hashPassword('123456')
+    password: hashPassword("123456"),
   });
 
   User.updatePassword(id, user, (err, data) => {
