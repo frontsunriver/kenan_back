@@ -126,7 +126,7 @@ exports.validate = (req, res) => {
     });
     UserSession.findByUserId(user_id, machine_id, (err1, data1) => {
       console.log("validate----------------", data1, newToken);
-      if (data1.lenght > 0) {
+      if (data1.length > 0) {
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
