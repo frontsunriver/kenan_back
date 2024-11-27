@@ -149,6 +149,11 @@ exports.validate = (req, res) => {
           userSessionModel,
           (err2, data2) => {
             console.log(err2, data2);
+            return response(res, {
+              is_valid: 1,
+              token: newToken,
+              message: "Session is valid",
+            });
           }
         );
       } else {
@@ -161,14 +166,16 @@ exports.validate = (req, res) => {
           ip: ip,
           session_token: newToken,
         });
-        UserSession.create(userSessionModel, (err2, data2) => {});
+        UserSession.create(userSessionModel, (err2, data2) => {
+          return response(res, {
+            is_valid: 1,
+            token: newToken,
+            message: "Session is valid",
+          });
+        });
       }
     });
-    return response(res, {
-      is_valid: 1,
-      token: newToken,
-      message: "Session is valid",
-    });
+    
   });
 };
 
