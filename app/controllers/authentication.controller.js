@@ -146,7 +146,9 @@ exports.validate = (req, res) => {
           user_id,
           machine_id,
           userSessionModel,
-          (err2, data2) => {}
+          (err2, data2) => {
+            console.log(err2, data2);
+          }
         );
       } else {
         const userSessionModel = new UserSession({
