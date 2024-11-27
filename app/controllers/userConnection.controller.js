@@ -20,7 +20,7 @@ exports.create = (req, res) => {
     }
     if (modelResult.length > 0) {
       Model.update(model, (updateError, updateData) => {
-        if (err) {
+        if (updateError) {
           response(res, {}, {}, 500, "Some error occurred.");
         } else {
           response(res, { data: updateData, result: "OK" });
