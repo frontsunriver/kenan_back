@@ -6,11 +6,15 @@ const {
   hashPassword,
   makeLogs,
   generateRandomOTP,
-  sendMail
+  sendMail,
 } = require("../utils/utils.js");
 const response = require("../utils/response.js");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET, JWT_EXPIRES_TIME } = require("../config/constant.js");
+const {
+  JWT_SECRET,
+  JWT_EXPIRES_TIME,
+  PRODUCT_MODE,
+} = require("../config/constant.js");
 
 exports.register = (req, res) => {
   // Validate request
@@ -56,11 +60,26 @@ exports.login = async (req, res) => {
     else {
       if (data.length > 0) {
         const otpValue = generateRandomOTP();
-        User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
-          if (otpErr) {
-            response(res, {}, {}, 400, "Something went wrong.");
-          }
-          sendMail(otpValue, email);
+        if (PRODUCT_MODE == 1) {
+          User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
+            if (otpErr) {
+              response(res, {}, {}, 400, "Something went wrong.");
+            }
+            sendMail(otpValue, email);
+            makeLogs(
+              0,
+              data[0].id,
+              email,
+              email,
+              "Login",
+              req.headers["x-forwarded-for"] || req.ip
+            );
+            return response(res, {
+              user: data[0],
+              message: "User log in successfully",
+            });
+          });
+        } else {
           makeLogs(
             0,
             data[0].id,
@@ -73,19 +92,7 @@ exports.login = async (req, res) => {
             user: data[0],
             message: "User log in successfully",
           });
-        });
-        // makeLogs(
-        //   0,
-        //   data[0].id,
-        //   email,
-        //   email,
-        //   "Login",
-        //   req.headers["x-forwarded-for"] || req.ip
-        // );
-        // return response(res, {
-        //   user: data[0],
-        //   message: "User log in successfully",
-        // });
+        }
       } else {
         return response(res, {}, {}, 400, "User doesn't exist.");
       }
