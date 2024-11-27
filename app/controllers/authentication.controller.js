@@ -134,8 +134,8 @@ exports.validate = (req, res) => {
       expiresIn: JWT_EXPIRES_TIME,
     });
     UserSession.findByUserId(user_id, machine_id, (err1, data1) => {
-      console.log("validate----------------", ip);
       if (data1.length > 0) {
+        console.log("validate----------------", ip);
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
@@ -152,6 +152,7 @@ exports.validate = (req, res) => {
           }
         );
       } else {
+        console.log("validate----------------", user_id);
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
