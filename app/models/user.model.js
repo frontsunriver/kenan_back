@@ -87,7 +87,7 @@ User.update = (id, user, result) => {
 
 User.updateOtp = (id, otp, result) => {
   sql.query(
-    "UPDATE users SET opt_secret = ? WHERE id = ?",
+    "UPDATE users SET otp_secret = ? WHERE id = ?",
     [otp, id],
     (err, res) => {
       if (err) {
