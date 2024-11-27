@@ -109,6 +109,7 @@ exports.logout = (req, res) => {
 exports.validate = (req, res) => {
   const user_id = req.body.user_id;
   const machine_id = req.body.machine_id;
+  const ip = req.body.id;
 
   if (!user_id || !machine_id)
     return response(res, {}, {}, 400, "User is not valid.");
@@ -133,12 +134,12 @@ exports.validate = (req, res) => {
       expiresIn: JWT_EXPIRES_TIME,
     });
     UserSession.findByUserId(user_id, machine_id, (err1, data1) => {
-      console.log("validate----------------", data1, newToken);
+      console.log("validate----------------", ip);
       if (data1.length > 0) {
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
-          ip: req.headers["x-forwarded-for"] || req.ip,
+          ip: ip,
           updated_at: new Date(),
           session_token: newToken,
         });
@@ -156,7 +157,7 @@ exports.validate = (req, res) => {
           machine_id: machine_id,
           updated_at: new Date(),
           created_at: new Date(),
-          ip: req.headers["x-forwarded-for"] || req.ip,
+          ip: ip,
           session_token: newToken,
         });
         UserSession.create(userSessionModel, (err2, data2) => {});

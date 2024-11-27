@@ -28,7 +28,6 @@ UserConnectionModel.findByUserAndMachinePort = (model, result) => {
         result(err, null);
         return;
       }
-
       return result(null, res);
     }
   );
