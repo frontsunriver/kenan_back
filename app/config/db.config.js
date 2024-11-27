@@ -1,3 +1,5 @@
+const { PRODUCT_MODE } = require("./constant");
+
 // module.exports = {
 //   HOST: "localhost",
 //   USER: "root",
@@ -6,8 +8,8 @@
 // };
 
 module.exports = {
-  HOST: "localhost",
-  USER: "kenandatabase",
-  PASSWORD: "Kenan@12345",
+  HOST: PRODUCT_MODE == 1 ? "localhost" : "localhost",
+  USER: PRODUCT_MODE == 1 ? "kenandatabase" : "root",
+  PASSWORD: PRODUCT_MODE == 1 ? "Kenan@12345" : "",
   DB: "kenan_db",
 };

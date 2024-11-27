@@ -7,6 +7,7 @@ const multer = require("multer");
 const https = require("https");
 const fs = require("fs");
 const app = express();
+const { PRODUCT_MODE } = require("./app/config/constant.js");
 // const {sendMail} = require("./app/utils/utils.js");
 // const multerS3 = require("multer-s3");
 // const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
@@ -107,18 +108,12 @@ const imageUpload = multer({ storage: storage });
 //   }
 // );
 
-
-const options = {
-  key: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.key'), // Update with your key file path
-  cert: fs.readFileSync('/etc/nginx/ssl/kenan-web-api.crt') // Update with your cert file path
-};
-app.get("/", (req, res, next)=> {
+app.get("/", (req, res, next) => {
   // sendMail('123456', "seriousman217winter@gmail.com")
   res.send("Server is running");
 });
 
 route(app);
-
 
 // app.use("/", (req, res, next) =>
 //   // in deployment we send index.html for all additional paths not defined by our express routes
@@ -126,14 +121,18 @@ route(app);
 //   res.sendFile(path.join(__dirname, "public", "index.html"))
 // );
 
-// set port, listen for requests
-
-// const PORT = process.env.PORT || 8000;
-// const server = app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}.`);
-// });
-
-const PORT = process.env.PORT || 443;
-https.createServer(options, app).listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-});
+if (PRODUCT_MODE == 1) {
+  const options = {
+    key: fs.readFileSync("/etc/nginx/ssl/kenan-web-api.key"), // Update with your key file path
+    cert: fs.readFileSync("/etc/nginx/ssl/kenan-web-api.crt"), // Update with your cert file path
+  };
+  const PORT = process.env.PORT || 443;
+  https.createServer(options, app).listen(PORT, () => {
+    console.log(`Server is running on ${PORT}`);
+  });
+} else {
+  const PORT = process.env.PORT || 8000;
+  const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+  });
+}
