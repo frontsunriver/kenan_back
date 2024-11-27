@@ -109,7 +109,7 @@ exports.logout = (req, res) => {
 exports.validate = (req, res) => {
   const user_id = req.body.user_id;
   const machine_id = req.body.machine_id;
-  const ip = req.body.id;
+  const ip = req.body.ip;
 
   if (!user_id || !machine_id)
     return response(res, {}, {}, 400, "User is not valid.");
