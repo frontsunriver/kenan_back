@@ -34,6 +34,19 @@ UserMachine.findById = (id, result) => {
   });
 };
 
+UserMachine.findByUserIdAndMachine = (user_id, machine_id, result) => {
+  sql.query(
+    `SELECT * FROM user_machines where user_id = ${user_id} and machine_id = '${machine_id}' `,
+    (err, data) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+      return result(null, res);
+    }
+  );
+};
+
 UserMachine.checkValidMachine = (user_id, machine_id, result) => {
   sql.query(
     `SELECT * FROM user_machines WHERE user_id = ${user_id} and machine_id = '${machine_id}'`,

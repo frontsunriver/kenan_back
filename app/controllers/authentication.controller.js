@@ -48,6 +48,7 @@ exports.register = (req, res) => {
 exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const machine_id = req.body.machine_id;
 
   if (!email || !password)
     return response(res, {}, {}, 400, "Please fill all the required fields.");
@@ -59,40 +60,60 @@ exports.login = async (req, res) => {
       });
     else {
       if (data.length > 0) {
-        const otpValue = generateRandomOTP();
-        if (PRODUCT_MODE == 1) {
-          User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
-            if (otpErr) {
+        const user_id = data[0].id;
+        UserMachine.findByUserIdAndMachine(
+          user_id,
+          machine_id,
+          (machineError, machineResult) => {
+            if (machineError) {
               response(res, {}, {}, 400, "Something went wrong.");
             }
-            sendMail(otpValue, email);
-            makeLogs(
-              0,
-              data[0].id,
-              email,
-              email,
-              "Login",
-              req.headers["x-forwarded-for"] || req.ip
-            );
-            return response(res, {
-              user: data[0],
-              message: "User log in successfully",
-            });
-          });
-        } else {
-          makeLogs(
-            0,
-            data[0].id,
-            email,
-            email,
-            "Login",
-            req.headers["x-forwarded-for"] || req.ip
-          );
-          return response(res, {
-            user: data[0],
-            message: "User log in successfully",
-          });
-        }
+            if (machineResult.length > 0) {
+              const otpValue = generateRandomOTP();
+              if (PRODUCT_MODE == 1) {
+                User.updateOtp(data[0].id, otpValue, (otpErr, otpRes) => {
+                  if (otpErr) {
+                    response(res, {}, {}, 400, "Something went wrong.");
+                  }
+                  sendMail(otpValue, email);
+                  makeLogs(
+                    0,
+                    data[0].id,
+                    email,
+                    email,
+                    "Login",
+                    req.headers["x-forwarded-for"] || req.ip
+                  );
+                  return response(res, {
+                    user: data[0],
+                    message: "User log in successfully",
+                  });
+                });
+              } else {
+                makeLogs(
+                  0,
+                  data[0].id,
+                  email,
+                  email,
+                  "Login",
+                  req.headers["x-forwarded-for"] || req.ip
+                );
+                return response(res, {
+                  user: data[0],
+                  message: "User log in successfully",
+                });
+              }
+            } else {
+              response(
+                res,
+                {},
+                {},
+                400,
+                "Your machine is not registered, please contact your admin to approve it."
+              );
+            }
+          }
+        );
       } else {
         return response(res, {}, {}, 400, "User doesn't exist.");
       }
@@ -201,7 +222,7 @@ exports.checkOTP = (req, res) => {
             });
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
             User.updateLoginCount(user_id, (err3, data3) => {
-              console.log('----------------------UserLoginUpdate', err3, data3);
+              console.log("----------------------UserLoginUpdate", err3, data3);
             });
             // Logs  oject_title: 'user_email' action: checkOTP detail: correct: + otp parameter
             makeLogs(
