@@ -132,19 +132,14 @@ User.updatePassword = (id, user, result) => {
 User.updateLoginCount = (id, result) => {
   sql.query(
     `update users set login_count = (select login_count from users where id = ${id}) + 1, last_login_at = ? where id = ${id}`,
-    [new Date()],
+    new Date(),
     (err, res) => {
       if (err) {
         result(null, err);
         return;
       }
 
-      if (res.affectedRows == 0) {
-        result({ kind: "not_found" }, null);
-        return;
-      }
-
-      result(null, { id: id });
+      result(null, res);
     }
   );
 };
@@ -153,12 +148,6 @@ User.remove = (id, result) => {
   sql.query("DELETE FROM users WHERE id = ?", id, (err, res) => {
     if (err) {
       result(null, err);
-      return;
-    }
-
-    if (res.affectedRows == 0) {
-      // not found Tutorial with the id
-      result({ kind: "not_found" }, null);
       return;
     }
 

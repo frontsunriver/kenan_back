@@ -134,9 +134,7 @@ exports.validate = (req, res) => {
       expiresIn: JWT_EXPIRES_TIME,
     });
     UserSession.findByUserId(user_id, machine_id, (err1, data1) => {
-      console.log(err1, data1);
       if (data1.length > 0) {
-        console.log("validate----------------", ip);
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
@@ -158,7 +156,6 @@ exports.validate = (req, res) => {
           }
         );
       } else {
-        console.log("validate----------------", user_id);
         const userSessionModel = new UserSession({
           user_id: user_id,
           machine_id: machine_id,
@@ -168,7 +165,6 @@ exports.validate = (req, res) => {
           session_token: newToken,
         });
         UserSession.create(userSessionModel, (err2, data2) => {
-          console.log(err2, data2);
           return response(res, {
             is_valid: 1,
             token: newToken,
@@ -177,7 +173,6 @@ exports.validate = (req, res) => {
         });
       }
     });
-    
   });
 };
 
@@ -205,7 +200,9 @@ exports.checkOTP = (req, res) => {
               expiresIn: JWT_EXPIRES_TIME,
             });
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
-            User.updateLoginCount(user_id, (err3, data3) => {});
+            User.updateLoginCount(user_id, (err3, data3) => {
+              console.log('----------------------UserLoginUpdate', err3, data3);
+            });
             // Logs  oject_title: 'user_email' action: checkOTP detail: correct: + otp parameter
             makeLogs(
               0,
