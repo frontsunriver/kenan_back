@@ -42,7 +42,7 @@ UserMachine.findByUserIdAndMachine = (user_id, machine_id, result) => {
         result(err, null);
         return;
       }
-      return result(null, res);
+      return result(null, data);
     }
   );
 };
