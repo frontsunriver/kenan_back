@@ -131,7 +131,11 @@ User.updatePassword = (id, user, result) => {
 
 User.updateLoginCount = (id, result) => {
   sql.query(
-    `update users set login_count = (select login_count from users where id = ${id}) + 1, last_login_at = ? where id = ${id}`,
+    `UPDATE users AS u
+      JOIN (SELECT login_count FROM users WHERE id = ${id}) AS sub
+      SET u.login_count = sub.login_count + 1, 
+          u.last_login_at = ? 
+      WHERE u.id = ${id}`,
     new Date(),
     (err, res) => {
       if (err) {
