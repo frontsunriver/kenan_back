@@ -127,7 +127,7 @@ exports.checkConfig = (req, res) => {
             if (error)
               return response(res, {}, {}, 500, "Something went wrong.");
             // Logs  oject_title: '' action: 'checkConfig', detail: ''
-            makeLogs(0, user_id, '', '', 'CheckConfig', '');
+            makeLogs(0, user_id, "", "", "CheckConfig", "");
             return response(res, data);
           });
         } else {
@@ -173,6 +173,7 @@ exports.findByUserId = (req, res) => {
 
             // Add port to the corresponding group
             groupedData[group_id].ports.push({
+              title: port.title,
               listen_port: port.listen_port,
               target: port.target,
               target_port: port.target_port,
@@ -212,7 +213,7 @@ exports.findByUserId = (req, res) => {
             groups: Object.values(groupedData),
           };
           // Logs  oject_title: '' action: 'getConfig', detail: ''
-          makeLogs(0, user_id, '', '', 'GetConfig', '');
+          makeLogs(0, user_id, "", "", "GetConfig", "");
           return response(res, result);
         } catch (exp) {
           return response(res, {}, {}, 500, "User does not have any group.");
