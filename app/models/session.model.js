@@ -2,6 +2,7 @@ const sql = require("./db.js");
 
 const SessionModel = function (model) {
   this.session_expircy_time = model.session_expircy_time;
+  this.agent_timeout = model.agent_timeout;
 };
 
 SessionModel.create = (model, result) => {
@@ -50,8 +51,8 @@ SessionModel.getAll = (keyword, flag, result) => {
 
 SessionModel.update = (model, result) => {
   sql.query(
-    "UPDATE global_configs SET session_expircy_time = ?",
-    [model.session_expircy_time],
+    "UPDATE global_configs SET session_expircy_time = ?, agent_timeout = ?",
+    [model.session_expircy_time, model.agent_timeout],
     (err, res) => {
       if (err) {
         result(null, err);

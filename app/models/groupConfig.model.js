@@ -115,7 +115,16 @@ GroupConfig.findByUserId = (id, result) => {
                 return;
               } else {
                 data["config"] = configRes;
-                return result(null, data);
+                sql.query(`Select * from global_configs `, (gError, gRes) => {
+                  if (gError) {
+                    console.log(gError);
+                    result(gError, null);
+                    return;
+                  } else {
+                    data["global_config"] = gRes;
+                    return result(null, data);
+                  }
+                });
               }
             }
           );

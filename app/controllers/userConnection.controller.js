@@ -11,6 +11,7 @@ exports.create = (req, res) => {
     machine_id: req.body.machine_id,
     listen_port: req.body.listen_port,
     status: req.body.status,
+    ip: req.body.ip,
     updated_at: new Date(),
   });
 
@@ -19,7 +20,20 @@ exports.create = (req, res) => {
       response(res, {}, {}, 500, "Some error occurred.");
     }
     if (modelResult.length > 0) {
-      Model.update(model, (updateError, updateData) => {
+      const updateModel = new Model({
+        user_id: req.body.user_id,
+        machine_id: req.body.machine_id,
+        listen_port: req.body.listen_port,
+        status: req.body.status,
+        ip: req.body.ip,
+        traffic_bytes:
+          req.body.status == 1
+            ? 0
+            : req.body.traffic_bytes + modelResult[0].traffic_bytes,
+        updated_at: new Date(),
+        started_at: new Date(),
+      });
+      Model.update(updateModel, (updateError, updateData) => {
         if (updateError) {
           response(res, {}, {}, 500, "Some error occurred.");
         } else {
@@ -27,7 +41,19 @@ exports.create = (req, res) => {
         }
       });
     } else {
-      Model.create(model, (err, data) => {
+      const createModel = new Model({
+        user_id: req.body.user_id,
+        machine_id: req.body.machine_id,
+        listen_port: req.body.listen_port,
+        status: req.body.status,
+        traffic_bytes: req.body.status == 1 ? 0 : req.body.traffic_bytes,
+        ip: req.body.ip,
+        updated_at: new Date(),
+      });
+      if (req.body.status == 1) {
+        this.createModel.created_at = new Date();
+      }
+      Model.create(createModel, (err, data) => {
         if (err) {
           if (err.errno == 1062) {
             response(res, {}, {}, 500, "Some error occurred.");

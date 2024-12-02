@@ -52,6 +52,7 @@ exports.update = (req, res) => {
 
   const model = new Model({
     session_expircy_time: req.body.session_expircy_time,
+    agent_timeout: req.body.agent_timeout
   });
 
   Model.update(model, (err, data) => {

@@ -7,6 +7,7 @@ const PortModel = function (model) {
   this.target_port = model.target_port;
   this.listen_port = model.listen_port;
   this.is_active = model.is_active;
+  this.visible = model.visible;
 };
 
 PortModel.create = (model, result) => {
@@ -55,7 +56,7 @@ PortModel.getAll = (keyword, flag, result) => {
 
 PortModel.update = (id, model, result) => {
   sql.query(
-    "UPDATE port_map SET title = ?, listen_port = ?, is_https = ?, target_port = ?, target = ?, is_active = ? WHERE id = ?",
+    "UPDATE port_map SET title = ?, listen_port = ?, is_https = ?, target_port = ?, target = ?, is_active = ?, visible = ? WHERE id = ?",
     [
       model.title,
       model.listen_port,
@@ -63,6 +64,7 @@ PortModel.update = (id, model, result) => {
       model.target_port,
       model.target,
       model.is_active,
+      model.visible,
       id,
     ],
     (err, res) => {

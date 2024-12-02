@@ -14,6 +14,7 @@ exports.create = (req, res) => {
     target: req.body.target_ip,
     is_https: req.body.is_https,
     is_active: req.body.is_active,
+    visible: req.body.visible,
   });
 
   Model.create(model, (err, data) => {
@@ -75,6 +76,7 @@ exports.update = (req, res) => {
     target_port: req.body.target_port,
     is_https: req.body.is_https,
     is_active: req.body.is_active,
+    visible: req.body.visible,
   });
 
   Model.update(id, model, (err, data) => {

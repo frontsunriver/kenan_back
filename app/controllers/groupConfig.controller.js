@@ -211,6 +211,8 @@ exports.findByUserId = (req, res) => {
           });
           const result = {
             groups: Object.values(groupedData),
+            session_expircy_time: data.global_config[0].session_expircy_time,
+            agent_timeout: data.global_config[0].agent_timeout,
           };
           // Logs  oject_title: '' action: 'getConfig', detail: ''
           makeLogs(0, user_id, "", "", "GetConfig", "");
