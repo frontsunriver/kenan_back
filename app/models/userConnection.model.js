@@ -45,42 +45,49 @@ UserConnectionModel.getAll = (
   flag,
   result
 ) => {
-  let query = ` SELECT * FROM (SELECT
-    a.*,
-    users.email,
-    port_map.title,
-    port_map.target,
-    port_map.target_port,
-    CASE
-        WHEN connection_status = 1 THEN
-            CASE
-                WHEN traffic_bytes / time_difference_seconds > 100 THEN 1
-                ELSE 2
-            END
-        WHEN connection_status = 0 THEN 0
-    END AS status_value,
-    CASE
-        WHEN connection_status = 1 THEN traffic_bytes / time_difference_seconds
-        WHEN connection_status = 0 THEN 0
-    END AS speed
-FROM
-    (
-        SELECT
-            *,
-            CASE
-                WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1
-                ELSE 0
-            END AS connection_status,
-            TIMESTAMPDIFF(SECOND, started_at, updated_at) AS time_difference_seconds
-        FROM
-            user_conns
-        WHERE
-            1 = 1
-    ) a
-LEFT JOIN users ON users.id = a.user_id
-LEFT JOIN port_map ON a.listen_port = port_map.listen_port
-WHERE
-    1 = 1) as user_table where 1=1 `;
+  let query = ` SELECT * 
+        FROM (
+            SELECT
+                a.*,
+                users.email,
+                port_map.title,
+                port_map.target,
+                port_map.target_port,
+                CASE
+                    WHEN connection_status = 1 THEN
+                        CASE
+                            WHEN time_difference_seconds > 0 AND traffic_bytes / time_difference_seconds > 100 THEN 1
+                            ELSE 2
+                        END
+                    WHEN connection_status = 0 THEN 0
+                END AS status_value,
+                CASE
+                    WHEN connection_status = 1 THEN 
+                        CASE 
+                            WHEN time_difference_seconds > 0 THEN traffic_bytes / time_difference_seconds
+                            ELSE 0
+                        END
+                    WHEN connection_status = 0 THEN 0
+                END AS speed
+            FROM (
+                SELECT
+                    *,
+                    CASE
+                        WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1
+                        ELSE 0
+                    END AS connection_status,
+                    TIMESTAMPDIFF(SECOND, started_at, updated_at) AS time_difference_seconds
+                FROM
+                    user_conns
+                WHERE
+                    1 = 1
+            ) a
+            LEFT JOIN users ON users.id = a.user_id
+            LEFT JOIN port_map ON a.listen_port = port_map.listen_port
+            WHERE
+                1 = 1
+        ) AS user_table 
+        WHERE 1 = 1 `;
 
   if (keyword) {
     query += ` and (user_table.email LIKE '%${keyword}%' or user_table.machine_id LIKE '%${keyword}%')`;
