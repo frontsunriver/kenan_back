@@ -51,7 +51,7 @@ exports.create = (req, res) => {
         updated_at: new Date(),
       });
       if (req.body.status == 1) {
-        this.createModel.created_at = new Date();
+        createModel.started_at = new Date();
       }
       Model.create(createModel, (err, data) => {
         if (err) {
