@@ -74,6 +74,32 @@ exports.findById = (req, res) => {
   }
 };
 
+exports.getLoginCount = (req, res) => {
+  if (!req.body) {
+    res.send({
+      success: false,
+      message: "Content can not be empty!",
+    });
+  }
+  try {
+    Model.getLoginCount((err, data) => {
+      if (err)
+        res.send({
+          success: false,
+          message: err.message || "Something went wrong",
+        });
+      else {
+        return res.send({ success: true, data: data });
+      }
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
 exports.findByUserId = (req, res) => {
   if (!req.body) {
     res.send({

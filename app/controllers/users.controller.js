@@ -32,8 +32,12 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   const flag = req.body.flag;
   const keyword = req.body.keyword;
+  const loginStart = req.body.loginStart
+  const loginEnd = req.body.loginEnd;
+  const createdStart = req.body.createdStart;
+  const createdEnd = req.body.createdEnd;
 
-  User.getAll(keyword, flag, (err, data) => {
+  User.getAll(keyword, flag, loginStart, loginEnd, createdStart, createdEnd, (err, data) => {
     if (err)
       res.send({
         success: false,

@@ -34,7 +34,15 @@ User.findById = (id, result) => {
   });
 };
 
-User.getAll = (keyword, flag, result) => {
+User.getAll = (
+  keyword,
+  flag,
+  loginStart,
+  loginEnd,
+  createdStart,
+  createdEnd,
+  result
+) => {
   let query = "SELECT * from users where 1=1 ";
 
   if (keyword) {
@@ -43,6 +51,14 @@ User.getAll = (keyword, flag, result) => {
 
   if (flag) {
     query += ` and users.is_valid = ${flag}`;
+  }
+
+  if (loginStart && loginEnd) {
+    query += ` and users.last_login_at >= '${loginStart}' and users.last_login_at <= '${loginEnd}'`;
+  }
+
+  if (createdStart && createdEnd) {
+    query += ` and users.created_at >= '${createdStart}' and users.created_at <= '${createdEnd}'`;
   }
 
   sql.query(query, (err, res) => {

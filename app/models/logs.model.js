@@ -38,6 +38,21 @@ LogsModel.findById = (id, result) => {
   });
 };
 
+LogsModel.getLoginCount = (result) => {
+  sql.query(
+    `SELECT *
+      FROM logs
+      WHERE DATE(time) = CURDATE() AND user_type = 0 AND action = 'login'`,
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+      return result(null, res);
+    }
+  );
+};
+
 LogsModel.findByUserId = (id, user_type, result) => {
   sql.query(
     `SELECT * FROM logs WHERE user_id = ${id} and user_type = ${user_type}`,

@@ -122,6 +122,7 @@ module.exports = (app) => {
   router.post("/logs/getAll", logs.getAll);
   router.post("/logs/findById", logs.findById);
   router.post("/logs/findByUserId", logs.findByUserId);
+  router.post("/logs/getLoginCount", logs.getLoginCount);
   router.post("/logs/update", logs.update);
   router.post("/logs/remove", logs.remove);
 
