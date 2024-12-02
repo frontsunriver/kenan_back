@@ -71,8 +71,12 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   const flag = req.body.flag;
   const keyword = req.body.keyword;
+  const portName = req.body.portName
+  const listenPort = req.body.listenPort;
+  const target = req.body.target;
+  const targetPort = req.body.targetPort;
 
-  Model.getAll(keyword, flag, (err, data) => {
+  Model.getAll(keyword, portName, listenPort, target, targetPort, flag, (err, data) => {
     if (err)
       res.send({
         success: false,

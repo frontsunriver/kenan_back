@@ -36,21 +36,77 @@ UserConnectionModel.findByUserAndMachinePort = (model, result) => {
   );
 };
 
-UserConnectionModel.getAll = (keyword, flag, result) => {
-  let query = `Select a.*, users.email, port_map.title, port_map.target, port_map.target_port from (SELECT *, CASE 
-        WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1 
-        ELSE 0 
-    END AS connection_status, TIMESTAMPDIFF(SECOND, started_at, updated_at) AS time_difference_seconds from user_conns where 1=1) a left join users on users.id = a.user_id left join port_map on a.listen_port = port_map.listen_port where 1=1 `;
+UserConnectionModel.getAll = (
+  keyword,
+  portName,
+  listenPort,
+  target,
+  targetPort,
+  flag,
+  result
+) => {
+  let query = ` SELECT * FROM (SELECT
+    a.*,
+    users.email,
+    port_map.title,
+    port_map.target,
+    port_map.target_port,
+    CASE
+        WHEN connection_status = 1 THEN
+            CASE
+                WHEN traffic_bytes / time_difference_seconds > 100 THEN 1
+                ELSE 2
+            END
+        WHEN connection_status = 0 THEN 0
+    END AS status_value,
+    CASE
+        WHEN connection_status = 1 THEN traffic_bytes / time_difference_seconds
+        WHEN connection_status = 0 THEN 0
+    END AS speed
+FROM
+    (
+        SELECT
+            *,
+            CASE
+                WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1
+                ELSE 0
+            END AS connection_status,
+            TIMESTAMPDIFF(SECOND, started_at, updated_at) AS time_difference_seconds
+        FROM
+            user_conns
+        WHERE
+            1 = 1
+    ) a
+LEFT JOIN users ON users.id = a.user_id
+LEFT JOIN port_map ON a.listen_port = port_map.listen_port
+WHERE
+    1 = 1) as user_table where 1=1 `;
 
   if (keyword) {
-    query += ` and (users.email LIKE '%${keyword}%' or a.listen_port LIKE '%${keyword}%' or a.machine_id LIKE '%${keyword}%')`;
+    query += ` and (user_table.email LIKE '%${keyword}%' or user_table.machine_id LIKE '%${keyword}%')`;
+  }
+
+  if (portName) {
+    query += ` and user_table.title LIKE '%${portName}%' `;
+  }
+
+  if (listenPort) {
+    query += ` and user_table.listen_port LIKE '%${portName}%' `;
+  }
+
+  if (target) {
+    query += ` and user_table.target LIKE '%${target}%' `;
+  }
+
+  if (targetPort) {
+    query += ` and user_table.target_port LIKE '%${targetPort}%' `;
   }
 
   if (flag) {
-    // query += ` and ports.is_active = ${flag}`;
+    query += ` and user_table.status_value = ${flag}`;
   }
 
-  query += " order by updated_at desc";
+  query += " order by user_table.updated_at desc";
 
   sql.query(query, (err, res) => {
     if (err) {
