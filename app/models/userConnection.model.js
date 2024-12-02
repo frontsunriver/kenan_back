@@ -133,7 +133,7 @@ UserConnectionModel.update = (model, result) => {
         model.updated_at,
         model.started_at,
         model.traffic_bytes,
-        ip,
+        model.ip,
         model.status,
         model.user_id,
         model.machine_id,
