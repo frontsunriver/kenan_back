@@ -73,7 +73,7 @@ UserConnectionModel.getAll = (
                 SELECT
                     *,
                     CASE
-                        WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1
+                        WHEN updated_at >= NOW() - INTERVAL 60 SECOND THEN 1
                         ELSE 0
                     END AS connection_status,
                     TIMESTAMPDIFF(SECOND, started_at, updated_at) AS time_difference_seconds
