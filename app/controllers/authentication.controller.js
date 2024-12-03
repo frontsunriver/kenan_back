@@ -49,11 +49,12 @@ exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const machine_id = req.body.machine_id;
+  const os = req.body.os;
 
-  if (!email || !password)
-    return response(res, {}, {}, 400, "Please fill all the required fields.");
-
+  if (!email || !password || !machine_id || !os)
+    return response(res, {}, {}, 400, "Bad Request");
   User.signin(email, password, async (err, data) => {
+    console.log(err, data);
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving user.",
@@ -64,7 +65,9 @@ exports.login = async (req, res) => {
         UserMachine.findByUserIdAndMachine(
           user_id,
           machine_id,
+          os,
           (machineError, machineResult) => {
+            console.log(machineResult, machineError);
             if (machineError) {
               response(res, {}, {}, 400, "Something went wrong.");
             }
@@ -115,7 +118,7 @@ exports.login = async (req, res) => {
           }
         );
       } else {
-        return response(res, {}, {}, 400, "User doesn't exist.");
+        return response(res, {}, {}, 400, "User email or password is not valid.");
       }
     }
   });
@@ -220,8 +223,7 @@ exports.checkOTP = (req, res) => {
               expiresIn: JWT_EXPIRES_TIME,
             });
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
-            User.updateLoginCount(user_id, (err3, data3) => {
-            });
+            User.updateLoginCount(user_id, (err3, data3) => {});
             // Logs  oject_title: 'user_email' action: checkOTP detail: correct: + otp parameter
             makeLogs(
               0,

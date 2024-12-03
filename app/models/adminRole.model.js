@@ -140,14 +140,26 @@ AdminRole.remove = (id, role_id, result) => {
   );
 };
 
-AdminRole.removeAll = (result) => {
-  sql.query("DELETE FROM admin_roles", (err, res) => {
+AdminRole.removeAll = (id, result) => {
+  sql.query(`DELETE FROM admin_roles where user_id = ${id}`, (err, res) => {
     if (err) {
       result(null, err);
       return;
     }
 
     result(null, res);
+  });
+};
+
+AdminRole.findAllRoles = (result) => {
+  sql.query(`Select * from url_lists where parent != 0`, (err, res) => {
+    if (err) {
+      result(err, null);
+      return;
+    }
+
+    result(null, res);
+    return;
   });
 };
 

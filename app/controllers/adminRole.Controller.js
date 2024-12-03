@@ -192,3 +192,40 @@ exports.removeRole = (req, res) => {
     }
   });
 };
+
+exports.selectAll = (req, res) => {
+  const id = req.body.id;
+  Model.findAllRoles((err, data) => {
+    if (err)
+      res.send({
+        success: false,
+        message: err.message || "Something went wrong",
+      });
+    else {
+      Model.batchUpdate(id, data, (allRoleError, allRole) => {
+        if (allRoleError)
+          res.send({
+            success: false,
+            message: allRoleError.message || "Something went wrong",
+          });
+        else {
+          res.send({ success: true, data: allRole });
+        }
+      });
+    }
+  });
+};
+
+exports.deselectAll = (req, res) => {
+  const id = req.body.id;
+  Model.removeAll(id, (err, data) => {
+    if (err)
+      res.send({
+        success: false,
+        message: err.message || "Something went wrong",
+      });
+    else {
+      res.send({ success: true, data: data });
+    }
+  });
+};

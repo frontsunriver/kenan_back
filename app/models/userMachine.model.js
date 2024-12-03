@@ -34,15 +34,24 @@ UserMachine.findById = (id, result) => {
   });
 };
 
-UserMachine.findByUserIdAndMachine = (user_id, machine_id, result) => {
+UserMachine.findByUserIdAndMachine = (user_id, machine_id, os, result) => {
   sql.query(
-    `SELECT * FROM user_machines where user_id = ${user_id} and machine_id = '${machine_id}' `,
+    `SELECT * FROM user_machines where user_id = ${user_id} and machine_id = '${machine_id}' and is_valid = 1 `,
     (err, data) => {
       if (err) {
         result(err, null);
         return;
       }
-      return result(null, data);
+      if (data.length == 0) {
+        sql.query(
+          `insert into user_machines (user_id, machine_id, is_valid, os, status, started_count) values (${user_id}, '${machine_id}', 2, '${os}', 0, 0)`,
+          (insertErr, insertData) => {
+            return result(null, data);
+          }
+        );
+      } else {
+        return result(null, data);
+      }
     }
   );
 };

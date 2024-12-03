@@ -187,11 +187,13 @@ User.removeAll = (result) => {
 };
 
 User.signin = (email, password, result) => {
-  let query = "SELECT * FROM users";
+  let query = "SELECT * FROM users WHERE 1=1 ";
 
   if (email) {
-    query += ` WHERE email = '${email}' and password = '${password}'`;
+    query += ` and email = '${email}' and password = '${password}'`;
   }
+
+  query += " and is_valid = 1";
 
   sql.query(query, (err, res) => {
     if (err) {

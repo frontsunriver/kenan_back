@@ -116,6 +116,8 @@ module.exports = (app) => {
   router.post("/adminRole/addRole", adminRole.addRole);
   router.post("/adminRole/removeRole", adminRole.removeRole);
   router.post("/adminRole/update", adminRole.batchUpdate);
+  router.post("/adminRole/selectAll", adminRole.selectAll);
+  router.post("/adminRole/deselectAll", adminRole.deselectAll);
 
   // Logs API
   router.post("/logs/create", logs.create);
