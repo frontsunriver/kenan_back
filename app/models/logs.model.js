@@ -55,9 +55,19 @@ LogsModel.getLoginCount = (result) => {
 
 LogsModel.findByUserId = (id, user_type, result) => {
   sql.query(
-    `SELECT * FROM logs WHERE user_id = ${id} and user_type = ${user_type}`,
+    `SELECT 
+              l.*, 
+              CASE 
+                  WHEN l.user_type = 1 THEN a.email 
+                  WHEN l.user_type = 0 THEN u.email
+              END AS email
+          FROM 
+              logs l
+          LEFT JOIN 
+              admins a ON l.user_id = a.id AND l.user_type = 1
+          LEFT JOIN 
+              users u ON l.user_id = u.id AND l.user_type = 0 where l.user_id = ${id} and l.user_type = ${user_type}`,
     (err, res) => {
-      console.log(err);
       if (err) {
         result(err, null);
         return;

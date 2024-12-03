@@ -56,7 +56,6 @@ exports.signin = (req, res) => {
         LogsModel.create(logData, (err1, data1) => {});
         AdminRolesModel.getAdminRoles(data[0].id, (error, result) => {
           if (error) {
-            console.log(error);
             return res.send({
               success: false,
               message: "Something went wrong",

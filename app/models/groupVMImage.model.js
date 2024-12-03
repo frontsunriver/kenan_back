@@ -24,7 +24,6 @@ GroupVMImage.findById = (id, result) => {
     `SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, groups_db.name FROM group_vm_images left join groups_db on groups_db.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id WHERE group_vm_images.id = ${id}`,
     (err, res) => {
       if (err) {
-        console.log(err);
         result(err, null);
         return;
       }
@@ -40,7 +39,6 @@ GroupVMImage.findByGroupId = (id, result) => {
     `SELECT group_vm_images.*, vm_images.title, vm_images.password, vm_images.size, vm_images.description, vm_images.download_url, groups_db.name FROM group_vm_images left join groups_db on groups_db.id = group_vm_images.group_id left join vm_images on vm_images.id = group_vm_images.vm_image_id WHERE group_vm_images.group_id = ${id}`,
     (err, res) => {
       if (err) {
-        console.log(err);
         result(err, null);
         return;
       }

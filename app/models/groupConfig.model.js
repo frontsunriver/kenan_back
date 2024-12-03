@@ -81,7 +81,6 @@ GroupConfig.findByUserId = (id, result) => {
     `select group_users.group_id, groups_db.name, port_map.* from group_users left join groups_db on groups_db.id = group_users.group_id left join group_ports on group_ports.group_id = group_users.group_id left join port_map on group_ports.port_map_id = port_map.id where group_users.user_id = ${id}`,
     (err, portRes) => {
       if (err) {
-        console.log(err);
         result(err, null);
         return;
       }
@@ -101,7 +100,6 @@ GroupConfig.findByUserId = (id, result) => {
               group_users.user_id = ${id}`,
         (vmError, vmRes) => {
           if (vmError) {
-            console.log(vmError);
             result(vmError, null);
             return;
           }
@@ -110,14 +108,12 @@ GroupConfig.findByUserId = (id, result) => {
             `Select group_configs.* from group_users left join group_configs on group_configs.group_id = group_users.group_id where user_id = ${id}`,
             (configError, configRes) => {
               if (configError) {
-                console.log(configError);
                 result(configError, null);
                 return;
               } else {
                 data["config"] = configRes;
                 sql.query(`Select * from global_configs `, (gError, gRes) => {
                   if (gError) {
-                    console.log(gError);
                     result(gError, null);
                     return;
                   } else {

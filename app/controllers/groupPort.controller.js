@@ -59,7 +59,6 @@ exports.findById = (req, res) => {
   const id = req.body.id;
   try {
     Model.findById(id, (err, data) => {
-      console.log(err);
       if (err) return response(res, {}, {}, 500, "Something went wrong.");
       else {
         return response(res, {
@@ -123,7 +122,6 @@ exports.batchUpdate = (req, res) => {
 
   Model.batchUpdate(id, modelData, (err, data) => {
     if (err) {
-      console.log(err);
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving user.",
       });

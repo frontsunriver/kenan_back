@@ -16,7 +16,6 @@ exports.create = async (req, res) => {
   let fileSize = 0;
   await fs.stat(fileUrl, (err, stats) => {
     if (err) {
-      console.log(err);
       fileSize = 0;
     }
     try {

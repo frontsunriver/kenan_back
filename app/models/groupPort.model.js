@@ -37,7 +37,6 @@ GroupPortModel.findByGroupId = (id, result) => {
     `SELECT group_ports.*, groups_db.name, port_map.title, port_map.listen_port, port_map.target, port_map.is_https, port_map.target_port FROM group_ports left join groups_db on groups_db.id = group_ports.group_id left join port_map on port_map.id = group_ports.port_map_id WHERE group_ports.group_id = ${id}`,
     (err, res) => {
       if (err) {
-        console.log(err);
         result(err, null);
         return;
       }

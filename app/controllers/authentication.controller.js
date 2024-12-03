@@ -168,7 +168,6 @@ exports.validate = (req, res) => {
           machine_id,
           userSessionModel,
           (err2, data2) => {
-            console.log(err2, data2);
             return response(res, {
               is_valid: 1,
               token: newToken,
@@ -222,7 +221,6 @@ exports.checkOTP = (req, res) => {
             });
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
             User.updateLoginCount(user_id, (err3, data3) => {
-              console.log("----------------------UserLoginUpdate", err3, data3);
             });
             // Logs  oject_title: 'user_email' action: checkOTP detail: correct: + otp parameter
             makeLogs(
