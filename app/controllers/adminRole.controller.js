@@ -11,6 +11,8 @@ exports.addRole = (req, res) => {
   const model = new Model({
     user_id: req.body.user_id,
     role_id: req.body.role_id,
+    checked: req.body.checked,
+    partialChecked: req.body.partialChecked,
   });
 
   Model.create(model, (err, data) => {
@@ -69,6 +71,24 @@ exports.childRole = (req, res) => {
         return res.send({ success: false, message: "Something went wrong." });
       else {
         res.send({ success: true, data: data });
+      }
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: "Wrong Parameter!",
+    });
+  }
+};
+
+exports.getList = (req, res) => {
+  try {
+    Model.getList((err, data) => {
+      if (err) return response(res, {}, {}, 500, "Something went wrong.");
+      else {
+        return response(res, {
+          data: data,
+        });
       }
     });
   } catch (err) {

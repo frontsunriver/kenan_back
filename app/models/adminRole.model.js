@@ -3,6 +3,8 @@ const sql = require("./db.js");
 const AdminRole = function (model) {
   this.user_id = model.user_id;
   this.role_id = model.role_id;
+  this.checked = model.checked;
+  this.partialChecked = model.partialChecked;
 };
 
 AdminRole.create = (model, result) => {
@@ -13,6 +15,18 @@ AdminRole.create = (model, result) => {
     }
 
     result(null, { id: res.insertId, ...model });
+  });
+};
+
+AdminRole.getList = (result) => {
+  sql.query(`Select * from url_lists order by parent`, (err, res) => {
+    if (err) {
+      result(err, null);
+      return;
+    }
+
+    result(null, res);
+    return;
   });
 };
 
@@ -57,7 +71,7 @@ AdminRole.findById = (id, result) => {
 
 AdminRole.getAdminRoles = (id, result) => {
   sql.query(
-    `select admin_roles.*, url_lists.name, url_lists.url from admin_roles left join url_lists on url_lists.id = admin_roles.role_id where admin_roles.user_id = ${id}`,
+    `select admin_roles.id, admin_roles.user_id, admin_roles.role_id, url_lists.name, url_lists.url from admin_roles left join url_lists on url_lists.id = admin_roles.role_id where admin_roles.user_id = ${id}`,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -71,7 +85,7 @@ AdminRole.getAdminRoles = (id, result) => {
 
 AdminRole.findByUserId = (id, result) => {
   sql.query(
-    `select * from url_lists left join admin_rols on url_lists.id = admin_rols.role_id where admin_roles.user_id = ${id}`,
+    `select * from admin_roles where admin_roles.user_id = ${id}`,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -105,9 +119,9 @@ AdminRole.batchUpdate = (id, models, result) => {
       return;
     }
     if (models.length > 0) {
-      const values = models.map((model) => [id, model.id]);
+      const values = models.map((model) => [id, model.role_id, model.checked, model.partialChecked]);
       const query = `
-      INSERT INTO admin_roles (user_id, role_id)
+      INSERT INTO admin_roles (user_id, role_id, checked, partialChecked)
       VALUES ?`;
 
       sql.query(query, [values], (err, res) => {

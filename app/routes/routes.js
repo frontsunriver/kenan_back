@@ -110,7 +110,9 @@ module.exports = (app) => {
   router.post("/admin/remove", admin.remove);
 
   // Admin Role API
+  router.post("/adminRole/getList", adminRole.getList);
   router.post("/adminRole/findById", adminRole.findById);
+  router.post("/adminRole/findByUserId", adminRole.findByUserId);
   router.post("/adminRole/findRoot", adminRole.findRoot);
   router.post("/adminRole/childRole", adminRole.childRole);
   router.post("/adminRole/addRole", adminRole.addRole);
@@ -118,6 +120,7 @@ module.exports = (app) => {
   router.post("/adminRole/update", adminRole.batchUpdate);
   router.post("/adminRole/selectAll", adminRole.selectAll);
   router.post("/adminRole/deselectAll", adminRole.deselectAll);
+  router.post("/adminRole/batchUpdate", adminRole.batchUpdate);
 
   // Logs API
   router.post("/logs/create", logs.create);
