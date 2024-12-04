@@ -36,7 +36,7 @@ UserSessionModel.findByUserId = (user_id, machine_id, result) => {
 };
 
 UserSessionModel.getAll = (keyword, flag, result) => {
-  let query = `Select * from (SELECT *, CASE 
+  let query = `Select a.*, users.email from (SELECT *, CASE 
         WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1 
         ELSE 0 
     END AS status from user_sessions where 1=1) a left join users on users.id = a.user_id `;
