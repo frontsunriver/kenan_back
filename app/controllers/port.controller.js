@@ -40,6 +40,18 @@ exports.getAll = (req, res) => {
   });
 };
 
+exports.getPortMapList = (req, res) => {
+  const flag = req.body.flag;
+  const keyword = req.body.keyword;
+
+  Model.getPortMapList(keyword, flag, (err, data) => {
+    if (err) return response(res, {}, {}, 500, "Something went wrong.");
+    else {
+      return response(res, { data: data });
+    }
+  });
+};
+
 exports.findById = (req, res) => {
   if (!req.body) {
     return response(res, {}, {}, 400, "Bad Request.");

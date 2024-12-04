@@ -142,7 +142,7 @@ module.exports = (app) => {
   router.post("/user/check_config", groupConfig.checkConfig);
   router.post("/vm-image/download", authenticateToken, vmImages.download);
   router.post("/vm-image/report-action", logs.updateStatus);
-  router.post("/network/routing-rules", port.getAll);
+  router.post("/network/routing-rules", port.getPortMapList);
   router.post("/network/backend-connect", userConnection.create);
 
   app.use("/api/", router);

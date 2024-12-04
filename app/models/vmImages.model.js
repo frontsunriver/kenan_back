@@ -22,15 +22,18 @@ VMImage.create = (model, result) => {
 };
 
 VMImage.findById = (id, result) => {
-  sql.query(`SELECT * FROM vm_images WHERE id = ${id}`, (err, res) => {
-    if (err) {
-      result(err, null);
+  sql.query(
+    `SELECT * FROM vm_images WHERE id = ${id} and is_valid = 1 `,
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+
+      result(null, res);
       return;
     }
-
-    result(null, res);
-    return;
-  });
+  );
 };
 
 VMImage.findByUserId = (id, result) => {

@@ -206,11 +206,13 @@ User.signin = (email, password, result) => {
 };
 
 User.checkOTP = (email, password, otp, result) => {
-  let query = "SELECT * FROM users";
+  let query = "SELECT * FROM users WHERE 1=1 ";
 
   if (email) {
-    query += ` WHERE email = '${email}' and password = '${password}' and otp_secret = ${otp}`;
+    query += ` and email = '${email}' and password = '${password}' and otp_secret = ${otp}`;
   }
+
+  query += " and is_valid = 1";
 
   sql.query(query, (err, res) => {
     if (err) {

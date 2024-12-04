@@ -58,7 +58,7 @@ UserMachine.findByUserIdAndMachine = (user_id, machine_id, os, result) => {
 
 UserMachine.checkValidMachine = (user_id, machine_id, result) => {
   sql.query(
-    `SELECT * FROM user_machines WHERE user_id = ${user_id} and machine_id = '${machine_id}'`,
+    `SELECT * FROM user_machines WHERE user_id = ${user_id} and machine_id = '${machine_id}' and is_valid = 1 `,
     (err, res) => {
       if (err) {
         result(err, null);

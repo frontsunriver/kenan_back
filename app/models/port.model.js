@@ -54,6 +54,27 @@ PortModel.getAll = (keyword, flag, result) => {
   });
 };
 
+PortModel.getPortMapList = (keyword, flag, result) => {
+  let query = "SELECT * from port_map where 1=1 and is_active = 1 ";
+
+  if (keyword) {
+    query += ` and (title like '%${keyword}%' or target like '%${keyword}%' or listen_port like '%${keyword}%')`;
+  }
+
+  if (flag) {
+    query += ` and port_map.is_active = ${flag}`;
+  }
+
+  sql.query(query, (err, res) => {
+    if (err) {
+      result(null, err);
+      return;
+    }
+
+    result(null, res);
+  });
+};
+
 PortModel.update = (id, model, result) => {
   sql.query(
     "UPDATE port_map SET title = ?, listen_port = ?, is_https = ?, target_port = ?, target = ?, is_active = ?, visible = ? WHERE id = ?",

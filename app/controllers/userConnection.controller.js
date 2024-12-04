@@ -19,17 +19,28 @@ exports.create = (req, res) => {
     if (modelError) {
       response(res, {}, {}, 500, "Some error occurred.");
     }
+
     if (modelResult.length > 0) {
+      console.log(
+        req.body.traffic_bytes + modelResult[0].traffic_bytes,
+        req.body.traffic_bytes,
+        modelResult[0].traffic_bytes
+      );
+      const traffic_bytes =
+        req.body.status == 1
+          ? 0
+          : req.body.traffic_bytes +
+            (modelResult[0].traffic_bytes == null
+              ? 0
+              : modelResult[0].traffic_bytes);
+
       const updateModel = new Model({
         user_id: req.body.user_id,
         machine_id: req.body.machine_id,
         listen_port: req.body.listen_port,
         status: req.body.status,
         ip: req.body.ip,
-        traffic_bytes:
-          req.body.status == 1
-            ? 0
-            : req.body.traffic_bytes + modelResult[0].traffic_bytes,
+        traffic_bytes: traffic_bytes,
         updated_at: new Date(),
         started_at: new Date(),
       });
@@ -41,12 +52,13 @@ exports.create = (req, res) => {
         }
       });
     } else {
+      const traffic_bytes = req.body.status == 1 ? 0 : req.body.traffic_bytes;
       const createModel = new Model({
         user_id: req.body.user_id,
         machine_id: req.body.machine_id,
         listen_port: req.body.listen_port,
         status: req.body.status,
-        traffic_bytes: req.body.status == 1 ? 0 : req.body.traffic_bytes,
+        traffic_bytes: traffic_bytes,
         ip: req.body.ip,
         updated_at: new Date(),
       });
@@ -71,25 +83,33 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   const flag = req.body.flag;
   const keyword = req.body.keyword;
-  const portName = req.body.portName
+  const portName = req.body.portName;
   const listenPort = req.body.listenPort;
   const target = req.body.target;
   const targetPort = req.body.targetPort;
 
-  Model.getAll(keyword, portName, listenPort, target, targetPort, flag, (err, data) => {
-    if (err)
-      res.send({
-        success: false,
-        message: err.message || "Something went wrong",
-      });
-    else {
-      if (data) {
-        res.send({ success: true, data: data });
-      } else {
-        res.send({ success: true, message: [] });
+  Model.getAll(
+    keyword,
+    portName,
+    listenPort,
+    target,
+    targetPort,
+    flag,
+    (err, data) => {
+      if (err)
+        res.send({
+          success: false,
+          message: err.message || "Something went wrong",
+        });
+      else {
+        if (data) {
+          res.send({ success: true, data: data });
+        } else {
+          res.send({ success: true, message: [] });
+        }
       }
     }
-  });
+  );
 };
 
 exports.findById = (req, res) => {

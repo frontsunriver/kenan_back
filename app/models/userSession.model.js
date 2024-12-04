@@ -75,6 +75,20 @@ UserSessionModel.update = (user_id, machine_id, model, result) => {
   );
 };
 
+UserSessionModel.updateUserSessionInfo = (user_id, machine_id, model, result) => {
+  sql.query(
+    "UPDATE user_sessions SET created_at = ?, updated_at = ?, ip = ? WHERE user_id = ? and machine_id = ?",
+    [model.created_at, model.updated_at, model.ip, user_id, machine_id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      return result(null, res);
+    }
+  );
+};
+
 UserSessionModel.remove = (id, result) => {
   sql.query("DELETE FROM user_sessions WHERE id = ?", id, (err, res) => {
     if (err) {

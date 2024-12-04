@@ -36,7 +36,7 @@ GroupConfig.findById = (id, result) => {
 GroupConfig.getUserConfig = (group_id, result) => {
   const data = {};
   sql.query(
-    `Select port_map.* from group_ports left join port_map on port_map.id = group_ports.port_map_id where group_ports.group_id = ${group_id}`,
+    `Select port_map.* from group_ports left join port_map on port_map.id = group_ports.port_map_id where group_ports.is_valid = 1 and port_map.is_active = 1 and group_ports.group_id = ${group_id}`,
     (portError, portData) => {
       if (portError) {
         result(portError, null);
@@ -78,7 +78,7 @@ GroupConfig.getUserConfig = (group_id, result) => {
 
 GroupConfig.findByUserId = (id, result) => {
   sql.query(
-    `select group_users.group_id, groups_db.name, port_map.* from group_users left join groups_db on groups_db.id = group_users.group_id left join group_ports on group_ports.group_id = group_users.group_id left join port_map on group_ports.port_map_id = port_map.id where group_users.user_id = ${id}`,
+    `select group_users.group_id, groups_db.name, port_map.* from group_users left join groups_db on groups_db.id = group_users.group_id left join group_ports on group_ports.group_id = group_users.group_id left join port_map on group_ports.port_map_id = port_map.id where groups_db.is_valid = 1 and group_ports.is_valid = 1 and port_map.is_active = 1 and group_users.is_valid = 1 and group_users.user_id = ${id}`,
     (err, portRes) => {
       if (err) {
         result(err, null);
@@ -97,6 +97,7 @@ GroupConfig.findByUserId = (id, result) => {
               LEFT JOIN group_vm_images ON group_vm_images.group_id = group_users.group_id
               LEFT JOIN vm_images ON group_vm_images.vm_image_id = vm_images.id 
             WHERE
+              groups_db.is_valid = 1 and group_vm_images.is_valid = 1 and vm_images.is_valid = 1 and group_users.is_valid = 1 and 
               group_users.user_id = ${id}`,
         (vmError, vmRes) => {
           if (vmError) {
@@ -105,7 +106,7 @@ GroupConfig.findByUserId = (id, result) => {
           }
           data["vm"] = vmRes;
           sql.query(
-            `Select group_configs.* from group_users left join group_configs on group_configs.group_id = group_users.group_id where user_id = ${id}`,
+            `Select group_configs.* from group_users left join group_configs on group_configs.group_id = group_users.group_id where group_users.is_valid = 1 and user_id = ${id}`,
             (configError, configRes) => {
               if (configError) {
                 result(configError, null);
@@ -132,7 +133,7 @@ GroupConfig.findByUserId = (id, result) => {
 
 GroupConfig.checkConfig = (user_id, group_id, result) => {
   sql.query(
-    `Select * from group_users where user_id = ${user_id} and group_id = ${group_id}`,
+    `Select * from group_users where user_id = ${user_id} and group_id = ${group_id} and is_valid = 1 `,
     (err, res) => {
       if (err) {
         result(err, null);
@@ -145,7 +146,7 @@ GroupConfig.checkConfig = (user_id, group_id, result) => {
 
 GroupConfig.checkVMImage = (group_id, vm_image_id, result) => {
   sql.query(
-    `Select * from group_vm_images where group_id = ${group_id} and vm_image_id = ${vm_image_id}`,
+    `Select * from group_vm_images where group_id = ${group_id} and vm_image_id = ${vm_image_id} and is_valid = 1 `,
     (err, res) => {
       if (err) {
         result(err, null);
