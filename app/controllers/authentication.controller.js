@@ -249,13 +249,7 @@ exports.checkOTP = (req, res) => {
                     user_id,
                     machine_id,
                     userSessionModel,
-                    (err2, data2) => {
-                      return response(res, {
-                        is_valid: 1,
-                        token: newToken,
-                        message: "Session is valid",
-                      });
-                    }
+                    (err2, data2) => {}
                   );
                 } else {
                   const userSessionModel = new UserSession({
@@ -265,13 +259,7 @@ exports.checkOTP = (req, res) => {
                     created_at: new Date(),
                     ip: ip,
                   });
-                  UserSession.create(userSessionModel, (err2, data2) => {
-                    return response(res, {
-                      is_valid: 1,
-                      token: newToken,
-                      message: "Session is valid",
-                    });
-                  });
+                  UserSession.create(userSessionModel, (err2, data2) => {});
                 }
               }
             );
