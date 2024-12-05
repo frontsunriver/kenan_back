@@ -77,3 +77,16 @@ exports.sendMail = async (otp, address) => {
 exports.generateRandomOTP = () => {
   return Math.floor(100000 + Math.random() * 900000);
 };
+
+exports.generateSessionId = (length) => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return result;
+};

@@ -7,6 +7,7 @@ const {
   makeLogs,
   generateRandomOTP,
   sendMail,
+  generateSessionId,
 } = require("../utils/utils.js");
 const response = require("../utils/response.js");
 const jwt = require("jsonwebtoken");
@@ -231,38 +232,47 @@ exports.checkOTP = (req, res) => {
             });
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
             User.updateLoginCount(user_id, (err3, data3) => {});
-
+            const sessionId = generateSessionId(40);
             // Update user session
-            UserSession.findByUserId(
-              user_id,
-              machine_id,
-              (sessionError, sessionData) => {
-                if (sessionData.length > 0) {
-                  const userSessionModel = new UserSession({
-                    user_id: user_id,
-                    machine_id: machine_id,
-                    ip: ip,
-                    updated_at: new Date(),
-                    created_at: new Date(),
-                  });
-                  UserSession.updateUserSessionInfo(
-                    user_id,
-                    machine_id,
-                    userSessionModel,
-                    (err2, data2) => {}
-                  );
-                } else {
-                  const userSessionModel = new UserSession({
-                    user_id: user_id,
-                    machine_id: machine_id,
-                    updated_at: new Date(),
-                    created_at: new Date(),
-                    ip: ip,
-                  });
-                  UserSession.create(userSessionModel, (err2, data2) => {});
-                }
-              }
-            );
+            const userSessionModel = new UserSession({
+              user_id: user_id,
+              machine_id: machine_id,
+              session_id: sessionId,
+              updated_at: new Date(),
+              created_at: new Date(),
+              ip: ip,
+            });
+            UserSession.create(userSessionModel, (err2, data2) => {});
+            // UserSession.findByUserId(
+            //   user_id,
+            //   machine_id,
+            //   (sessionError, sessionData) => {
+            //     if (sessionData.length > 0) {
+            //       const userSessionModel = new UserSession({
+            //         user_id: user_id,
+            //         machine_id: machine_id,
+            //         ip: ip,
+            //         updated_at: new Date(),
+            //         created_at: new Date(),
+            //       });
+            //       UserSession.updateUserSessionInfo(
+            //         user_id,
+            //         machine_id,
+            //         userSessionModel,
+            //         (err2, data2) => {}
+            //       );
+            //     } else {
+            //       const userSessionModel = new UserSession({
+            //         user_id: user_id,
+            //         machine_id: machine_id,
+            //         updated_at: new Date(),
+            //         created_at: new Date(),
+            //         ip: ip,
+            //       });
+            //       UserSession.create(userSessionModel, (err2, data2) => {});
+            //     }
+            //   }
+            // );
             // End user session
 
             makeLogs(
@@ -277,6 +287,7 @@ exports.checkOTP = (req, res) => {
             return response(res, {
               token: token,
               user: data[0],
+              session_id: sessionId,
               message: "User log in successfully",
             });
           } else {

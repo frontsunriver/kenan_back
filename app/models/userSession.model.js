@@ -5,6 +5,7 @@ const UserSessionModel = function (model) {
   this.machine_id = model.machine_id;
   this.created_at = model.created_at;
   this.updated_at = model.updated_at;
+  this.session_id = model.session_id;
   this.ip = model.ip;
   this.session_token = model.session_token;
 };
