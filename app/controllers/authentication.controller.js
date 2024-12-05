@@ -55,7 +55,6 @@ exports.login = async (req, res) => {
   if (!email || !password || !machine_id || !os)
     return response(res, {}, {}, 400, "Bad Request");
   User.signin(email, password, async (err, data) => {
-    console.log(err, data);
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving user.",
@@ -68,7 +67,6 @@ exports.login = async (req, res) => {
           machine_id,
           os,
           (machineError, machineResult) => {
-            console.log(machineResult, machineError);
             if (machineError) {
               response(res, {}, {}, 400, "Something went wrong.");
             }
@@ -242,7 +240,7 @@ exports.checkOTP = (req, res) => {
               created_at: new Date(),
               ip: ip,
             });
-            UserSession.create(userSessionModel, (err2, data2) => {});
+            UserSession.create(userSessionModel, (err2, data2) => {console.log(err2, data2)});
             // UserSession.findByUserId(
             //   user_id,
             //   machine_id,
