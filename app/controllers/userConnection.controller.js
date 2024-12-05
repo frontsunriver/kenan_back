@@ -1,7 +1,8 @@
 const Model = require("../models/userConnection.model.js");
+const UserSession = require("../models/userSession.model.js");
 const response = require("../utils/response.js");
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
   if (!req.body) {
     response(res, {}, {}, 400, "Bad Request.");
@@ -15,7 +16,18 @@ exports.create = (req, res) => {
     updated_at: new Date(),
   });
 
-  Model.findByUserAndMachinePort(model, (modelError, modelResult) => {
+  await UserSession.updateTime(
+    req.body.user_id,
+    req.body.machine_id,
+    req.body.session_id,
+    (err, data) => {
+      if (err) {
+        response(res, {}, {}, 500, "Some error occurred.");
+      }
+    }
+  );
+
+  await Model.findByUserAndMachinePort(model, (modelError, modelResult) => {
     if (modelError) {
       response(res, {}, {}, 500, "Some error occurred.");
     }
