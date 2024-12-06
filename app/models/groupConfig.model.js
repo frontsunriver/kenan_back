@@ -67,8 +67,25 @@ GroupConfig.getUserConfig = (group_id, result) => {
                 allow_screenshot: configRes[0].allow_screenshot,
                 enable_outbound: configRes[0].enable_outbound,
               };
+            } else {
+              data["config"] = {
+                copy_text_to_vm: 0,
+                copy_text_from_vm: 0,
+                copy_file_to_vm: 0,
+                copy_file_from_vm: 0,
+                allow_screenshot: 0,
+                enable_outbound: 0,
+              };
             }
-            return result(null, data);
+            sql.query(
+              `select * from global_configs`,
+              (configError, configRes) => {
+                data["session_expircy_time"] =
+                  configRes[0].session_expircy_time;
+                data["agent_timeout"] = configRes[0].agent_timeout;
+                return result(null, data);
+              }
+            );
           }
         }
       );

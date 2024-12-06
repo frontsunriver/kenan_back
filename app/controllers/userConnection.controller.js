@@ -28,16 +28,7 @@ exports.create = async (req, res) => {
   );
 
   await Model.findByUserAndMachinePort(model, (modelError, modelResult) => {
-    if (modelError) {
-      response(res, {}, {}, 500, "Some error occurred.");
-    }
-
     if (modelResult.length > 0) {
-      console.log(
-        req.body.traffic_bytes + modelResult[0].traffic_bytes,
-        req.body.traffic_bytes,
-        modelResult[0].traffic_bytes
-      );
       const traffic_bytes =
         req.body.status == 1
           ? 0
@@ -56,13 +47,7 @@ exports.create = async (req, res) => {
         updated_at: new Date(),
         started_at: new Date(),
       });
-      Model.update(updateModel, (updateError, updateData) => {
-        if (updateError) {
-          response(res, {}, {}, 500, "Some error occurred.");
-        } else {
-          response(res, { data: updateData, result: "OK" });
-        }
-      });
+      Model.update(updateModel, (updateError, updateData) => {});
     } else {
       const traffic_bytes = req.body.status == 1 ? 0 : req.body.traffic_bytes;
       const createModel = new Model({
@@ -77,19 +62,38 @@ exports.create = async (req, res) => {
       if (req.body.status == 1) {
         createModel.started_at = new Date();
       }
-      Model.create(createModel, (err, data) => {
-        if (err) {
-          if (err.errno == 1062) {
-            response(res, {}, {}, 500, "Some error occurred.");
-          } else {
-            response(res, {}, {}, 500, "Some error occurred.");
-          }
-        } else {
-          response(res, { data: data, result: "OK" });
-        }
-      });
+      Model.create(createModel, (err, data) => {});
     }
   });
+
+  await UserSession.findBySessionId(
+    req.body.session_id,
+    (modelError, modelResult) => {
+      if (modelResult.length > 0) {
+        const traffic_bytes =
+          req.body.traffic_bytes +
+          (modelResult[0].traffic_bytes == null
+            ? 0
+            : modelResult[0].traffic_bytes);
+
+        const updateModel = new UserSession({
+          session_id: req.body.session_id,
+          updated_at: new Date(),
+        });
+        UserSession.updateSessionInfo(
+          updateModel,
+          (updateError, updateData) => {
+            if (updateError) {
+              response(res, {}, {}, 500, "Some error occurred.");
+            }
+            return response(res, updateData);
+          }
+        );
+      } else {
+        response(res, {}, {}, 400, "Invalid session id.");
+      }
+    }
+  );
 };
 
 exports.getAll = (req, res) => {

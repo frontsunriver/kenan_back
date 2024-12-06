@@ -231,7 +231,6 @@ exports.checkOTP = (req, res) => {
             UserMachine.updateOsInfo(data1[0].id, os, (err2, data2) => {});
             User.updateLoginCount(user_id, (err3, data3) => {});
             const sessionId = generateSessionId(40);
-            console.log("session_id-----------------------", sessionId);
             // Update user session
             const userSessionModel = new UserSession({
               user_id: user_id,
@@ -240,10 +239,9 @@ exports.checkOTP = (req, res) => {
               updated_at: new Date(),
               created_at: new Date(),
               ip: ip,
+              traffic_bytes: 0,
             });
-            UserSession.create(userSessionModel, (err2, data2) => {
-              console.log(err2, data2);
-            });
+            UserSession.create(userSessionModel, (err2, data2) => {});
             // UserSession.findByUserId(
             //   user_id,
             //   machine_id,

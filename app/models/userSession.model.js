@@ -37,10 +37,35 @@ UserSessionModel.findByUserId = (user_id, machine_id, result) => {
 };
 
 UserSessionModel.getAll = (keyword, flag, result) => {
-  let query = `Select a.*, users.email from (SELECT *, CASE 
-        WHEN updated_at >= NOW() - INTERVAL 30 SECOND THEN 1 
-        ELSE 0 
-    END AS status from user_sessions where 1=1) a left join users on users.id = a.user_id `;
+  let query = `SELECT 
+        a.*, 
+        users.email,
+        CASE 
+            WHEN a.status = 0 THEN 0 
+            ELSE (TIMESTAMPDIFF(SECOND, a.created_at, a.updated_at) / NULLIF(a.traffic_bytes, 0)) 
+        END AS speed
+    FROM (
+        SELECT 
+            us.id,  
+            us.user_id,
+            us.machine_id,
+            us.session_id,
+            us.created_at,
+            us.updated_at,
+            gc.session_expircy_time,
+            TIMESTAMPDIFF(SECOND, us.updated_at, NOW()) AS timeDiffVal,
+            CASE 
+                WHEN TIMESTAMPDIFF(SECOND, us.updated_at, NOW()) < gc.session_expircy_time THEN 1 
+                ELSE 0 
+            END AS status,
+            -- Assuming traffic_bytes is a column in user_sessions or needs to be calculated
+            us.traffic_bytes  -- Adjust this if traffic_bytes comes from another source
+        FROM 
+            user_sessions us
+        JOIN 
+            global_configs gc ON 1=1
+    ) a 
+    LEFT JOIN users ON users.id = a.user_id `;
 
   if (keyword) {
     // query += ` and (users.first_name LIKE '%${keyword}%' or users.last_name LIKE '%${keyword}%' or users.handle LIKE '%${keyword}%')`;
@@ -50,7 +75,7 @@ UserSessionModel.getAll = (keyword, flag, result) => {
     // query += ` and ports.is_active = ${flag}`;
   }
 
-  query += " order by updated_at desc";
+  query += " order by a.updated_at desc";
 
   sql.query(query, (err, res) => {
     if (err) {
@@ -60,6 +85,21 @@ UserSessionModel.getAll = (keyword, flag, result) => {
 
     result(null, res);
   });
+};
+
+UserSessionModel.findBySessionId = (session_id, result) => {
+  sql.query(
+    `SELECT * FROM user_sessions WHERE session_id = ?`,
+    id,
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      } else {
+        return result(null, res);
+      }
+    }
+  );
 };
 
 UserSessionModel.update = (user_id, machine_id, model, result) => {
@@ -99,6 +139,20 @@ UserSessionModel.updateTime = (user_id, machine_id, session_id, result) => {
   sql.query(
     "UPDATE user_sessions SET updated_at = ? WHERE user_id = ? and machine_id = ? and session_id = ?",
     [model.updated_at, user_id, machine_id, session_id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      return result(null, res);
+    }
+  );
+};
+
+UserSessionModel.updateSessionInfo = (model, result) => {
+  sql.query(
+    "UPDATE user_sessions SET updated_at = ?, traffic_bytes = ? WHERE session_id = ?",
+    [model.updated_at, model.traffic_bytes, model.session_id],
     (err, res) => {
       if (err) {
         result(null, err);
