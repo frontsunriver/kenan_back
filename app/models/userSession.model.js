@@ -8,6 +8,7 @@ const UserSessionModel = function (model) {
   this.session_id = model.session_id;
   this.ip = model.ip;
   this.session_token = model.session_token;
+  this.traffic_bytes = model.traffic_bytes;
 };
 
 UserSessionModel.create = (model, result) => {
@@ -151,8 +152,8 @@ UserSessionModel.updateTime = (user_id, machine_id, session_id, result) => {
 
 UserSessionModel.updateSessionInfo = (model, result) => {
   sql.query(
-    "UPDATE user_sessions SET updated_at = ?, traffic_bytes = ? WHERE session_id = ?",
-    [model.updated_at, model.traffic_bytes, model.session_id],
+    "UPDATE user_sessions SET updated_at = ?, traffic_bytes = ?, ip = ? WHERE session_id = ?",
+    [model.updated_at, model.traffic_bytes, model.ip, model.session_id],
     (err, res) => {
       if (err) {
         result(null, err);

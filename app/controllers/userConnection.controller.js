@@ -79,6 +79,8 @@ exports.create = async (req, res) => {
         const updateModel = new UserSession({
           session_id: req.body.session_id,
           updated_at: new Date(),
+          traffic_bytes: traffic_bytes,
+          ip: req.body.ip,
         });
         UserSession.updateSessionInfo(
           updateModel,
