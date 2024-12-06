@@ -43,7 +43,7 @@ UserSessionModel.getAll = (keyword, flag, result) => {
         users.email,
         CASE 
             WHEN a.status = 0 THEN 0 
-            ELSE (TIMESTAMPDIFF(SECOND, a.created_at, a.updated_at) / NULLIF(a.traffic_bytes, 0)) 
+            ELSE (NULLIF(a.traffic_bytes, 0) / TIMESTAMPDIFF(SECOND, a.created_at, a.updated_at)) 
         END AS speed
     FROM (
         SELECT 
