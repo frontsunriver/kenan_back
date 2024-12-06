@@ -92,7 +92,7 @@ UserSessionModel.getAll = (keyword, flag, result) => {
 UserSessionModel.findBySessionId = (session_id, result) => {
   sql.query(
     `SELECT * FROM user_sessions WHERE session_id = ?`,
-    id,
+    session_id,
     (err, res) => {
       if (err) {
         result(err, null);
