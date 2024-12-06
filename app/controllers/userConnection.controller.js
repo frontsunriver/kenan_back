@@ -16,16 +16,16 @@ exports.create = async (req, res) => {
     updated_at: new Date(),
   });
 
-  await UserSession.updateTime(
-    req.body.user_id,
-    req.body.machine_id,
-    req.body.session_id,
-    (err, data) => {
-      if (err) {
-        response(res, {}, {}, 500, "Some error occurred.");
-      }
-    }
-  );
+  // await UserSession.updateTime(
+  //   req.body.user_id,
+  //   req.body.machine_id,
+  //   req.body.session_id,
+  //   (err, data) => {
+  //     if (err) {
+  //       response(res, {}, {}, 500, "Some error occurred.");
+  //     }
+  //   }
+  // );
 
   await Model.findByUserAndMachinePort(model, (modelError, modelResult) => {
     if (modelResult.length > 0) {
