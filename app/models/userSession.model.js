@@ -53,6 +53,7 @@ UserSessionModel.getAll = (keyword, flag, result) => {
             us.session_id,
             us.created_at,
             us.updated_at,
+            us.ip,
             gc.session_expircy_time,
             TIMESTAMPDIFF(SECOND, us.updated_at, NOW()) AS timeDiffVal,
             CASE 
